@@ -6,7 +6,13 @@ import { TYPES_EVENEMENT, labelsEvenement } from "@/lib/labels";
 
 const initial: ActionState = {};
 
-export function EvenementForm({ dossierId }: { dossierId: string }) {
+export function EvenementForm({
+  dossierId,
+  lieuPlaceholder,
+}: {
+  dossierId: string;
+  lieuPlaceholder?: string;
+}) {
   const [state, action, pending] = useActionState(ajouterEvenementAction, initial);
 
   return (
@@ -38,7 +44,7 @@ export function EvenementForm({ dossierId }: { dossierId: string }) {
           className="field"
           id="lieu"
           name="lieu"
-          placeholder="Yaounde, VAC, clinique panel..."
+          placeholder={lieuPlaceholder ?? "Consulat, VAC, clinique..."}
           required
         />
       </div>

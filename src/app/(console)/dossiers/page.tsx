@@ -3,36 +3,44 @@ import { prisma } from "@/lib/db";
 import { PageFrame } from "@/components/PageFrame";
 import { StatusBadge } from "@/components/StatusBadge";
 import { principalName } from "@/lib/labels";
+import { NOMS_PAYS } from "@/lib/pays";
 
 export default async function DossiersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; pays?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, pays } = await searchParams;
   const query = (q ?? "").trim();
+  const paysFiltre = (pays ?? "").trim();
 
   const dossiers = await prisma.dossier.findMany({
-    where: query
-      ? {
-          OR: [
-            { referenceInterne: { contains: query } },
-            { iuc: { contains: query } },
-            { numeroDossier: { contains: query } },
-            { programme: { contains: query } },
-            {
-              personnes: {
-                some: {
-                  OR: [
-                    { nom: { contains: query } },
-                    { prenom: { contains: query } },
-                  ],
+    where: {
+      AND: [
+        paysFiltre ? { paysDestination: paysFiltre } : {},
+        query
+          ? {
+              OR: [
+                { referenceInterne: { contains: query } },
+                { iuc: { contains: query } },
+                { numeroDossier: { contains: query } },
+                { programme: { contains: query } },
+                { paysDestination: { contains: query } },
+                {
+                  personnes: {
+                    some: {
+                      OR: [
+                        { nom: { contains: query } },
+                        { prenom: { contains: query } },
+                      ],
+                    },
+                  },
                 },
-              },
-            },
-          ],
-        }
-      : undefined,
+              ],
+            }
+          : {},
+      ],
+    },
     include: { personnes: true, conseiller: true },
     orderBy: { updatedAt: "desc" },
   });
@@ -47,17 +55,37 @@ export default async function DossiersPage({
         </Link>
       }
     >
-      <form className="mb-6 max-w-md">
-        <label className="lbl" htmlFor="q">
-          Recherche
-        </label>
-        <input
-          className="field"
-          id="q"
-          name="q"
-          defaultValue={query}
-          placeholder="Nom, IUC, reference Relais..."
-        />
+      <form className="mb-6 grid max-w-2xl gap-3 sm:grid-cols-[1fr_200px]">
+        <div>
+          <label className="lbl" htmlFor="q">
+            Recherche
+          </label>
+          <input
+            className="field"
+            id="q"
+            name="q"
+            defaultValue={query}
+            placeholder="Nom, identifiant, reference..."
+          />
+        </div>
+        <div>
+          <label className="lbl" htmlFor="pays">
+            Pays
+          </label>
+          <select className="field" id="pays" name="pays" defaultValue={paysFiltre}>
+            <option value="">Tous</option>
+            {NOMS_PAYS.map((nom) => (
+              <option key={nom} value={nom}>
+                {nom}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="sm:col-span-2">
+          <button className="btn btn-primary" type="submit">
+            Filtrer
+          </button>
+        </div>
       </form>
 
       <div className="card overflow-hidden">
@@ -67,6 +95,7 @@ export default async function DossiersPage({
               <tr>
                 <th>Reference</th>
                 <th>Principal</th>
+                <th>Pays</th>
                 <th>Programme</th>
                 <th>Famille</th>
                 <th>Statut</th>
@@ -87,6 +116,9 @@ export default async function DossiersPage({
                     ) : null}
                   </td>
                   <td>{principalName(d.personnes)}</td>
+                  <td>
+                    <span className="chip">{d.paysDestination}</span>
+                  </td>
                   <td>{d.programme}</td>
                   <td>{d.personnes.length}</td>
                   <td>

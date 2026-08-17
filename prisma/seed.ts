@@ -46,6 +46,7 @@ type EmploiSeed = {
 
 type DossierSeed = {
   referenceInterne: string;
+  paysDestination?: string;
   iuc: string | null;
   numeroDossier: string | null;
   programme: string;
@@ -60,6 +61,7 @@ type DossierSeed = {
 const dossiers: DossierSeed[] = [
   {
     referenceInterne: "REL-2026-0001",
+    paysDestination: "Canada",
     iuc: "1122041783",
     numeroDossier: "E004512330",
     programme: "Residence permanente",
@@ -118,11 +120,13 @@ const dossiers: DossierSeed[] = [
   },
   {
     referenceInterne: "REL-2026-0002",
-    iuc: "1098834412",
-    numeroDossier: "S008771204",
-    programme: "Permis d etudes",
+    paysDestination: "France",
+    iuc: "FV-2026-109883",
+    numeroDossier: "YDE-771204",
+    programme: "Visa etudiant",
     statut: "BIOMETRIE",
-    notes: "Lettre d'admission Universite Laval. Preuve de fonds a completer avant le VAC.",
+    notes:
+      "Lettre d'admission Universite Paris-Saclay. Preuve de fonds a completer avant TLS.",
     conseillerEmail: "jean.mbarga@relais.cm",
     personnes: [
       {
@@ -139,15 +143,16 @@ const dossiers: DossierSeed[] = [
       {
         type: "BIOMETRIE",
         dateHeure: "2026-08-24T10:00:00",
-        lieu: "VAC Yaounde",
+        lieu: "TLS Contact Yaounde",
         arriverMinutesAvant: 15,
         statut: "PLANIFIE",
-        consignes: "Passeport original et convocation VAC.",
+        consignes: "Passeport original et convocation TLS.",
       },
     ],
   },
   {
     referenceInterne: "REL-2026-0003",
+    paysDestination: "Canada",
     iuc: "1109928834",
     numeroDossier: "E004601118",
     programme: "Residence permanente",
@@ -187,11 +192,12 @@ const dossiers: DossierSeed[] = [
   },
   {
     referenceInterne: "REL-2026-0004",
+    paysDestination: "Belgique",
     iuc: null,
     numeroDossier: null,
-    programme: "Parrainage familial",
+    programme: "Regroupement familial",
     statut: "SOUMIS",
-    notes: "Dossier depose le 2 aout. En attente d'accuse IRCC.",
+    notes: "Dossier depose le 2 aout. En attente de l office des etrangers.",
     conseillerEmail: "jean.mbarga@relais.cm",
     personnes: [
       {
@@ -217,7 +223,7 @@ const dossiers: DossierSeed[] = [
       {
         type: "DEPOT",
         dateHeure: "2026-08-02T11:30:00",
-        lieu: "Portail IRCC",
+        lieu: "TLS Contact Yaounde",
         arriverMinutesAvant: 0,
         statut: "TERMINE",
         consignes: "",
@@ -226,6 +232,7 @@ const dossiers: DossierSeed[] = [
   },
   {
     referenceInterne: "REL-2026-0005",
+    paysDestination: "Canada",
     iuc: "1083345561",
     numeroDossier: "V002118904",
     programme: "Super visa",
@@ -256,6 +263,7 @@ const dossiers: DossierSeed[] = [
   },
   {
     referenceInterne: "REL-2026-0006",
+    paysDestination: "Canada",
     iuc: "1132209981",
     numeroDossier: "E004712880",
     programme: "Residence permanente",
@@ -295,11 +303,12 @@ const dossiers: DossierSeed[] = [
   },
   {
     referenceInterne: "REL-2026-0007",
-    iuc: "1076612290",
-    numeroDossier: "W001445672",
-    programme: "Permis de travail",
+    paysDestination: "Allemagne",
+    iuc: "VG-2026-107661",
+    numeroDossier: "AB-1445672",
+    programme: "Visa travail",
     statut: "BIOMETRIE",
-    notes: "Offre LMIA employeur Quebec. Biometrie au VAC Yaounde cette semaine.",
+    notes: "Offre emploi Berlin. Biometrie VFS Yaounde cette semaine.",
     conseillerEmail: "jean.mbarga@relais.cm",
     personnes: [
       {
@@ -316,20 +325,21 @@ const dossiers: DossierSeed[] = [
       {
         type: "BIOMETRIE",
         dateHeure: "2026-08-19T09:30:00",
-        lieu: "VAC Yaounde",
+        lieu: "VFS Global Yaounde",
         arriverMinutesAvant: 15,
         statut: "PLANIFIE",
-        consignes: "Convocation VAC et passeport.",
+        consignes: "Convocation VFS et passeport.",
       },
     ],
   },
   {
     referenceInterne: "REL-2026-0008",
-    iuc: "1061183344",
-    numeroDossier: "V002220118",
-    programme: "Visa visiteur",
+    paysDestination: "Etats-Unis",
+    iuc: "AA00FOTSO118",
+    numeroDossier: "YDE2026220118",
+    programme: "Visa B1/B2",
     statut: "SOUMIS",
-    notes: "Visite famille a Montreal, 3 semaines. Preuves de fonds jointes.",
+    notes: "Visite famille a Washington, 3 semaines. DS-160 depose.",
     conseillerEmail: "aisha.bello@relais.cm",
     personnes: [
       {
@@ -346,7 +356,7 @@ const dossiers: DossierSeed[] = [
       {
         type: "DEPOT",
         dateHeure: "2026-08-12T16:20:00",
-        lieu: "Portail IRCC",
+        lieu: "Portail CEAC",
         arriverMinutesAvant: 0,
         statut: "TERMINE",
         consignes: "",
@@ -355,6 +365,7 @@ const dossiers: DossierSeed[] = [
   },
   {
     referenceInterne: "REL-2026-0009",
+    paysDestination: "Canada",
     iuc: "1140027765",
     numeroDossier: "E004800221",
     programme: "Residence permanente",
@@ -421,11 +432,12 @@ const dossiers: DossierSeed[] = [
   },
   {
     referenceInterne: "REL-2026-0010",
-    iuc: "1115567782",
-    numeroDossier: "S008902441",
-    programme: "Permis d etudes",
+    paysDestination: "Royaume-Uni",
+    iuc: "1115-5677-8200-4412",
+    numeroDossier: "GWF08902441",
+    programme: "Student visa",
     statut: "SOUMIS",
-    notes: "College LaSalle, Montreal. CAQ recu. Attente decision etudes.",
+    notes: "CAS University of Manchester. Attente decision Student visa.",
     conseillerEmail: "aisha.bello@relais.cm",
     personnes: [
       {
@@ -442,15 +454,16 @@ const dossiers: DossierSeed[] = [
       {
         type: "BIOMETRIE",
         dateHeure: "2026-08-25T11:15:00",
-        lieu: "VAC Douala",
+        lieu: "VAC TLS Douala",
         arriverMinutesAvant: 15,
         statut: "PLANIFIE",
-        consignes: "Convocation et passeport.",
+        consignes: "Convocation TLS et passeport.",
       },
     ],
   },
   {
     referenceInterne: "REL-2026-0011",
+    paysDestination: "Canada",
     iuc: "1058890012",
     numeroDossier: "E004199330",
     programme: "Residence permanente",
@@ -511,6 +524,7 @@ const dossiers: DossierSeed[] = [
   },
   {
     referenceInterne: "REL-2026-0013",
+    paysDestination: "Canada",
     iuc: null,
     numeroDossier: null,
     programme: "Residence permanente",
@@ -613,6 +627,7 @@ async function main() {
     const created = await prisma.dossier.create({
       data: {
         referenceInterne: d.referenceInterne,
+        paysDestination: d.paysDestination ?? "Canada",
         iuc: d.iuc,
         numeroDossier: d.numeroDossier,
         programme: d.programme,
@@ -654,7 +669,7 @@ async function main() {
         action: "CREATION",
         entite: "Dossier",
         entiteId: created.id,
-        details: `Ouverture ${d.referenceInterne}, ${d.programme}, ${d.personnes[0].prenom} ${d.personnes[0].nom}`,
+        details: `Ouverture ${d.referenceInterne}, ${d.paysDestination ?? "Canada"}, ${d.programme}, ${d.personnes[0].prenom} ${d.personnes[0].nom}`,
       },
     });
   }

@@ -17,8 +17,11 @@ import {
   labelsStatut,
   principalName,
 } from "@/lib/labels";
+import { PaysDestinationSelect } from "@/components/PaysDestinationSelect";
+import { configPays } from "@/lib/pays";
 import {
   majNotesAction,
+  majPaysDestinationAction,
   majStatutDossierAction,
   majStatutEvenementAction,
   retirerPersonneAction,
@@ -42,6 +45,7 @@ export default async function DossierPage({
 
   if (!dossier) notFound();
 
+  const config = configPays(dossier.paysDestination);
   const entretien = dossier.evenements.find(
     (e) => e.type === "ENTRETIEN" && e.statut === "PLANIFIE",
   );
@@ -61,6 +65,22 @@ export default async function DossierPage({
           <Link href={`/dossiers/${dossier.id}/fiche`} className="btn btn-ghost">
             Fiche convocation
           </Link>
+          <form action={majPaysDestinationAction} className="flex flex-wrap items-end gap-2">
+            <input type="hidden" name="id" value={dossier.id} />
+            <div>
+              <label className="lbl" htmlFor="paysDestination">
+                Pays
+              </label>
+              <PaysDestinationSelect
+                value={dossier.paysDestination}
+                className="field-inline"
+                inline
+              />
+            </div>
+            <button className="btn btn-ghost" type="submit">
+              Maj
+            </button>
+          </form>
           <form action={majStatutDossierAction} className="flex items-end gap-2">
             <input type="hidden" name="id" value={dossier.id} />
             <div>
@@ -88,12 +108,20 @@ export default async function DossierPage({
       }
     >
       <p className="-mt-5 mb-6 text-sm text-sage">
-        {dossier.programme} · {dossier.conseiller.nom}
+        {dossier.paysDestination} · {dossier.programme} · {config.autorite} ·{" "}
+        {dossier.conseiller.nom}
       </p>
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-3">
-        <Meta label="IUC" value={dossier.iuc ?? "Non renseigne"} />
-        <Meta label="Numero IRCC" value={dossier.numeroDossier ?? "Non renseigne"} />
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Meta label="Destination" value={dossier.paysDestination} />
+        <Meta
+          label={config.identifiant}
+          value={dossier.iuc ?? "Non renseigne"}
+        />
+        <Meta
+          label={config.numeroDossier}
+          value={dossier.numeroDossier ?? "Non renseigne"}
+        />
         <Meta label="Residence" value={dossier.paysResidence} />
       </div>
 
@@ -106,6 +134,7 @@ export default async function DossierPage({
             assister:{" "}
             {nonAccompagnants.map((p) => `${p.prenom} ${p.nom}`).join(", ")}.
           </p>
+          <p className="mt-2 text-sm text-sage">{config.alerteFamille}</p>
         </div>
       ) : null}
 
@@ -188,14 +217,14 @@ export default async function DossierPage({
               ))
             )}
           </ul>
-          <EvenementForm dossierId={dossier.id} />
+          <EvenementForm dossierId={dossier.id} lieuPlaceholder={config.rdvLieu} />
         </section>
       </div>
 
       <section className="card card-pad mt-6">
         <h2 className="mb-1 font-serif text-xl text-forest">Emploi et bulletins</h2>
         <p className="mb-4 text-sm text-sage">
-          Preuves d'experience pour le NOC et l'admissibilite. Le nom de
+          Preuves d'experience professionnelle pour l'admissibilite. Le nom de
           l'employeur n'est enregistre que s'il figure sur le bulletin.
         </p>
         {dossier.emplois.length === 0 ? (

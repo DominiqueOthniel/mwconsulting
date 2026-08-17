@@ -1,12 +1,3 @@
-export const PROGRAMMES = [
-  "Residence permanente",
-  "Permis d etudes",
-  "Permis de travail",
-  "Parrainage familial",
-  "Super visa",
-  "Visa visiteur",
-] as const;
-
 export const STATUTS = [
   "BROUILLON",
   "SOUMIS",
@@ -100,3 +91,5 @@ export function statutTone(statut: string) {
 export function formatFcfa(n: number) {
   return `${new Intl.NumberFormat("fr-FR").format(n)} FCFA`;
 }
+
+export { PROGRAMMES } from "@/lib/pays";

@@ -11,8 +11,9 @@ export default function LoginPage() {
             Relais, le bureau des dossiers MW Consulting.
           </h1>
           <p className="mt-4 max-w-md text-sm text-paper/75">
-            Le TGV de l'Immigration. Convocations, composition familiale,
-            biometrie, medicaux et preuves d'emploi.
+            Le TGV de l'Immigration. Dossiers vers plusieurs pays,
+            convocations, composition familiale, biometrie, medicaux et
+            preuves d'emploi.
           </p>
         </div>
         <p className="text-xs text-paper/50">Douala · Yaounde</p>

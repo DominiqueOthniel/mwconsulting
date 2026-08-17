@@ -28,6 +28,7 @@ export default async function AgendaPage() {
                 {labelsEvenement[e.type]}
               </h2>
               <p className="text-sm">
+                <span className="chip mr-2">{e.dossier.paysDestination}</span>
                 <Link className="link" href={`/dossiers/${e.dossierId}`}>
                   {e.dossier.referenceInterne}
                 </Link>{" "}

@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Relais · MW Consulting",
-  description: "Pilotage des dossiers d immigration, MW Consulting",
+  description:
+    "Pilotage des dossiers d immigration vers plusieurs pays, MW Consulting",
 };
 
 export default function RootLayout({

@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { createSession, destroySession, requireSession } from "@/lib/auth";
 import { ecrireAudit } from "@/lib/audit";
+import { normaliserPays } from "@/lib/pays";
 
 export type ActionState = { error?: string; ok?: boolean };
 
@@ -79,6 +80,12 @@ export async function creerDossierAction(
   const prenom = String(formData.get("prenom") ?? "").trim();
   const nom = String(formData.get("nom") ?? "").trim();
   const programme = String(formData.get("programme") ?? "").trim();
+  let paysDestination = String(formData.get("paysDestination") ?? "").trim();
+  if (paysDestination === "Autre") {
+    paysDestination = String(formData.get("paysDestinationAutre") ?? "").trim();
+  }
+  paysDestination = normaliserPays(paysDestination) || "Canada";
+  const paysResidence = String(formData.get("paysResidence") ?? "Cameroun").trim();
   const dateNaissance = String(formData.get("dateNaissance") ?? "").trim();
   const iuc = String(formData.get("iuc") ?? "").trim();
   const numeroDossier = String(formData.get("numeroDossier") ?? "").trim();
@@ -94,6 +101,8 @@ export async function creerDossierAction(
     data: {
       referenceInterne,
       programme,
+      paysDestination,
+      paysResidence: paysResidence || "Cameroun",
       statut: "BROUILLON",
       iuc: iuc || null,
       numeroDossier: numeroDossier || null,
@@ -117,7 +126,7 @@ export async function creerDossierAction(
     "CREATION",
     "Dossier",
     dossier.id,
-    `Ouverture ${referenceInterne} pour ${prenom} ${nom}`,
+    `Ouverture ${referenceInterne} vers ${paysDestination} pour ${prenom} ${nom}`,
   );
 
   revalidatePath("/");
@@ -134,6 +143,30 @@ export async function majStatutDossierAction(formData: FormData) {
   await prisma.dossier.update({ where: { id }, data: { statut } });
   await ecrireAudit(session, "MISE_A_JOUR", "Dossier", id, `Statut: ${statut}`);
   revalidatePath(`/dossiers/${id}`);
+  revalidatePath("/");
+  revalidatePath("/dossiers");
+}
+
+export async function majPaysDestinationAction(formData: FormData) {
+  const session = await requireSession();
+  const id = String(formData.get("id") ?? "");
+  let paysDestination = String(formData.get("paysDestination") ?? "").trim();
+  if (paysDestination === "Autre") {
+    paysDestination = String(formData.get("paysDestinationAutre") ?? "").trim();
+  }
+  paysDestination = normaliserPays(paysDestination);
+  if (!id || !paysDestination) return;
+
+  await prisma.dossier.update({ where: { id }, data: { paysDestination } });
+  await ecrireAudit(
+    session,
+    "MISE_A_JOUR",
+    "Dossier",
+    id,
+    `Pays de destination: ${paysDestination}`,
+  );
+  revalidatePath(`/dossiers/${id}`);
+  revalidatePath(`/dossiers/${id}/fiche`);
   revalidatePath("/");
   revalidatePath("/dossiers");
 }

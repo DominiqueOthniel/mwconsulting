@@ -27,6 +27,7 @@ model Dossier {
   programme        String
   statut           String
   paysResidence    String      @default("Cameroun")
+  paysDestination  String      @default("Canada")
   notes            String      @default("")
   conseillerId     String
   conseiller       User        @relation(fields: [conseillerId], references: [id])

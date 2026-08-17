@@ -1,16 +1,28 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import { creerDossierAction, type ActionState } from "@/lib/actions";
-import { PROGRAMMES } from "@/lib/labels";
+import { PaysDestinationSelect } from "@/components/PaysDestinationSelect";
+import { configPays } from "@/lib/pays";
 
 const initial: ActionState = {};
 
 export function NouveauDossierForm() {
   const [state, action, pending] = useActionState(creerDossierAction, initial);
+  const [paysEffectif, setPaysEffectif] = useState("Canada");
+  const config = useMemo(() => configPays(paysEffectif), [paysEffectif]);
 
   return (
     <form action={action} className="max-w-xl space-y-4">
+      <div>
+        <label className="lbl" htmlFor="paysDestination">
+          Pays de destination
+        </label>
+        <PaysDestinationSelect
+          value="Canada"
+          onPaysChange={setPaysEffectif}
+        />
+      </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
           <label className="lbl" htmlFor="prenom">
@@ -35,24 +47,30 @@ export function NouveauDossierForm() {
         <label className="lbl" htmlFor="programme">
           Programme
         </label>
-        <select className="field" id="programme" name="programme" defaultValue="Residence permanente">
-          {PROGRAMMES.map((p) => (
+        <select className="field" id="programme" name="programme">
+          {config.programmes.map((p) => (
             <option key={p} value={p}>
               {p}
             </option>
           ))}
         </select>
       </div>
+      <div>
+        <label className="lbl" htmlFor="paysResidence">
+          Pays de residence
+        </label>
+        <input className="field" id="paysResidence" name="paysResidence" defaultValue="Cameroun" />
+      </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
           <label className="lbl" htmlFor="iuc">
-            IUC IRCC (optionnel)
+            {config.identifiant} (optionnel)
           </label>
           <input className="field" id="iuc" name="iuc" />
         </div>
         <div>
           <label className="lbl" htmlFor="numeroDossier">
-            Numero de dossier (optionnel)
+            {config.numeroDossier} (optionnel)
           </label>
           <input className="field" id="numeroDossier" name="numeroDossier" />
         </div>

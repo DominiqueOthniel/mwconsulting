@@ -8,6 +8,7 @@ import {
   labelsRole,
   principalName,
 } from "@/lib/labels";
+import { configPays } from "@/lib/pays";
 
 export default async function FichePage({
   params,
@@ -24,6 +25,7 @@ export default async function FichePage({
   });
   if (!dossier) notFound();
 
+  const config = configPays(dossier.paysDestination);
   const entretien = dossier.evenements.find(
     (e) => e.type === "ENTRETIEN" && e.statut === "PLANIFIE",
   );
@@ -35,7 +37,9 @@ export default async function FichePage({
           <BrandLogo size={64} />
           <p className="mt-3 text-xs uppercase tracking-widest text-sage">MW Consulting</p>
           <h1 className="mt-2 font-serif text-3xl text-forest">Fiche de convocation</h1>
-          <p className="mt-1 text-sm text-sage">{dossier.referenceInterne}</p>
+          <p className="mt-1 text-sm text-sage">
+            {dossier.referenceInterne} · {dossier.paysDestination}
+          </p>
         </div>
         <PrintButton />
       </div>
@@ -46,16 +50,24 @@ export default async function FichePage({
           <dd className="font-medium">{principalName(dossier.personnes)}</dd>
         </div>
         <div>
+          <dt className="text-xs uppercase text-sage">Pays</dt>
+          <dd>{dossier.paysDestination}</dd>
+        </div>
+        <div>
           <dt className="text-xs uppercase text-sage">Programme</dt>
           <dd>{dossier.programme}</dd>
         </div>
         <div>
-          <dt className="text-xs uppercase text-sage">IUC</dt>
+          <dt className="text-xs uppercase text-sage">{config.identifiant}</dt>
           <dd>{dossier.iuc ?? "Non renseigne"}</dd>
         </div>
         <div>
-          <dt className="text-xs uppercase text-sage">Dossier IRCC</dt>
+          <dt className="text-xs uppercase text-sage">{config.numeroDossier}</dt>
           <dd>{dossier.numeroDossier ?? "Non renseigne"}</dd>
+        </div>
+        <div>
+          <dt className="text-xs uppercase text-sage">Autorite</dt>
+          <dd>{config.autorite}</dd>
         </div>
       </dl>
 
@@ -105,8 +117,8 @@ export default async function FichePage({
       </section>
 
       <p className="mt-10 text-xs text-sage">
-        Document interne d agence. Ne pas deposer tel quel a IRCC. Imprimer via
-        le navigateur.
+        Document interne d agence. Ne pas deposer tel quel aupres de{" "}
+        {config.autorite}. Imprimer via le navigateur.
       </p>
     </div>
   );
