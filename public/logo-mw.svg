@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="MW Consulting">
+  <circle cx="100" cy="100" r="98" fill="#0a2744"/>
+  <circle cx="100" cy="100" r="92" fill="none" stroke="#1ba3e0" stroke-width="2.5"/>
+  <circle cx="100" cy="100" r="78" fill="none" stroke="#1ba3e0" stroke-width="1"/>
+  <path id="arcTop" d="M 38,108 A 64,64 0 0 1 162,108" fill="none"/>
+  <path id="arcBot" d="M 160,118 A 62,62 0 0 1 40,118" fill="none"/>
+  <text fill="#1ba3e0" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2.2">
+    <textPath href="#arcTop" startOffset="50%" text-anchor="middle">MW CONSULTING</textPath>
+  </text>
+  <text fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="8.5" font-weight="600" letter-spacing="0.6">
+    <textPath href="#arcBot" startOffset="50%" text-anchor="middle">Le TGV de l'Immigration</textPath>
+  </text>
+  <path d="M 22 96 l 14 4 -10 6 16-1" fill="#fff"/>
+  <path d="M 178 96 l -14 4 10 6 -16-1" fill="#fff"/>
+  <path d="M100 68 L128 84 L128 116 L100 132 L72 116 L72 84 Z" fill="#0a2744" stroke="#1ba3e0" stroke-width="2.5"/>
+  <circle cx="100" cy="68" r="2.2" fill="#fff"/>
+  <circle cx="128" cy="84" r="2.2" fill="#fff"/>
+  <circle cx="128" cy="116" r="2.2" fill="#fff"/>
+  <circle cx="100" cy="132" r="2.2" fill="#fff"/>
+  <circle cx="72" cy="116" r="2.2" fill="#fff"/>
+  <circle cx="72" cy="84" r="2.2" fill="#fff"/>
+  <text x="100" y="108" text-anchor="middle" fill="#1ba3e0" stroke="#074a73" stroke-width="0.6" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="800">MW</text>
+</svg>

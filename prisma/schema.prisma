@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  nom          String
+  email        String     @unique
+  passwordHash String
+  role         String
+  createdAt    DateTime   @default(now())
+  dossiers     Dossier[]
+  audits       AuditLog[]
+}
+
+model Dossier {
+  id               String      @id @default(cuid())
+  referenceInterne String      @unique
+  iuc              String?
+  numeroDossier    String?
+  programme        String
+  statut           String
+  paysResidence    String      @default("Cameroun")
+  notes            String      @default("")
+  conseillerId     String
+  conseiller       User        @relation(fields: [conseillerId], references: [id])
+  personnes        Personne[]
+  evenements       Evenement[]
+  emplois          Emploi[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model Personne {
+  id                    String   @id @default(cuid())
+  dossierId             String
+  dossier               Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  roleFamilial          String
+  prenom                String
+  nom                   String
+  dateNaissance         String?
+  sexe                  String?
+  accompagne            Boolean  @default(true)
+  doitAssisterEntretien Boolean  @default(true)
+  createdAt             DateTime @default(now())
+}
+
+model Evenement {
+  id                  String   @id @default(cuid())
+  dossierId           String
+  dossier             Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  type                String
+  dateHeure           DateTime
+  lieu                String
+  arriverMinutesAvant Int      @default(30)
+  statut              String   @default("PLANIFIE")
+  consignes           String   @default("")
+  createdAt           DateTime @default(now())
+}
+
+model Emploi {
+  id            String         @id @default(cuid())
+  dossierId     String
+  dossier       Dossier        @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  raisonSociale String         @default("")
+  ville         String         @default("")
+  niu           String?
+  telephone     String?
+  poste         String
+  departement   String?
+  dateEmbauche  String?
+  anciennete    String?
+  notes         String         @default("")
+  bulletins     BulletinPaie[]
+  createdAt     DateTime       @default(now())
+}
+
+model BulletinPaie {
+  id              String   @id @default(cuid())
+  emploiId        String
+  emploi          Emploi   @relation(fields: [emploiId], references: [id], onDelete: Cascade)
+  annee           Int
+  periode         String
+  dateVisa        String?
+  salaireBase     Int
+  cnpsRetraite    Int      @default(0)
+  cnpsLogement    Int      @default(0)
+  irpp            Int      @default(0)
+  totalDeductions Int      @default(0)
+  salaireNet      Int
+  devise          String   @default("XAF")
+  createdAt       DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  entite    String
+  entiteId  String
+  details   String   @default("")
+  createdAt DateTime @default(now())
+}
