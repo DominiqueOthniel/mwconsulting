@@ -5,7 +5,8 @@
   "description": "Cockpit de suivi des dossiers d immigration pour agences au Cameroun",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "build:netlify": "prisma generate && prisma db push && prisma db seed && next build",
     "start": "next start",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
@@ -24,6 +25,7 @@
     "zod": "^4.0.17"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.15.13",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.10",

@@ -33,12 +33,19 @@ npm run dev
 
 Ouvrir http://localhost:3000
 
-Comptes de demonstration:
-
-- Conseiller: jean.mbarga@relais.cm / RelaisDemo2026
-- Direction: marie.nana@relais.cm / RelaisAdmin2026
+Les comptes de demonstration sont crees par le seed. Les mots de passe ne sont pas publies ici.
 
 Les donnees de seed sont fictives. Ne jamais y coller de vrais IUC clients.
+
+## Netlify
+
+Le fichier `netlify.toml` fixe le build Next.js. Dans le site Netlify:
+
+- Repository: DominiqueOthniel/mwconsulting
+- Branche: main
+- Publish directory: `.next` (pas `public`)
+
+Puis Deploys, Trigger deploy, Deploy site.
 
 ## Architecture
 

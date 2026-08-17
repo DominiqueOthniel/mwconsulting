@@ -1,0 +1,14 @@
+[build]
+  command = "npm run build:netlify"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  DATABASE_URL = "file:./dev.db"
+  AUTH_SECRET = "relais-mw-consulting-netlify-demo"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  included_files = ["prisma/dev.db", "prisma/schema.prisma"]
