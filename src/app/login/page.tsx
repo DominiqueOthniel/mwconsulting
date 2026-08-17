@@ -22,17 +22,8 @@ export default function LoginPage() {
           <div className="mb-4 lg:hidden">
             <BrandLogo size={64} />
           </div>
-          <h2 className="font-serif text-2xl text-ink">Connexion conseiller</h2>
-          <p className="mb-6 mt-1 text-sm text-sage">
-            Compte demo: jean.mbarga@relais.cm
-          </p>
+          <h2 className="mb-6 font-serif text-2xl text-ink">Connexion conseiller</h2>
           <LoginForm />
-          <p className="mt-6 text-xs text-sage">
-            Informaticien: rudy.pougom@relais.cm / RelaisDemo2026
-          </p>
-          <p className="mt-2 text-xs text-sage">
-            Direction: marie.nana@relais.cm / RelaisAdmin2026
-          </p>
         </div>
       </section>
     </div>

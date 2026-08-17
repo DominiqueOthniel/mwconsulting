@@ -20,7 +20,6 @@ export function LoginForm() {
           name="email"
           type="email"
           autoComplete="username"
-          defaultValue="jean.mbarga@relais.cm"
           required
         />
       </div>
@@ -34,7 +33,6 @@ export function LoginForm() {
           name="password"
           type="password"
           autoComplete="current-password"
-          defaultValue="RelaisDemo2026"
           required
         />
       </div>
