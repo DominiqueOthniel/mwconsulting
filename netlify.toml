@@ -7,8 +7,16 @@
   DATABASE_URL = "file:./dev.db"
   AUTH_SECRET = "relais-mw-consulting-netlify-demo"
 
+[context.production.environment]
+  DATABASE_URL = "file:./dev.db"
+  AUTH_SECRET = "relais-mw-consulting-netlify-demo"
+
+[context.deploy-preview.environment]
+  DATABASE_URL = "file:./dev.db"
+  AUTH_SECRET = "relais-mw-consulting-netlify-demo"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [functions]
-  included_files = ["prisma/dev.db", "prisma/schema.prisma"]
+  included_files = ["prisma/dev.db", "prisma/schema.prisma", "node_modules/.prisma/client/relais.db"]

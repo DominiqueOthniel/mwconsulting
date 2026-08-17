@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { authSecret } from "@/lib/secret";
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -18,11 +19,7 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    const secret = process.env.AUTH_SECRET;
-    if (!secret) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-    await jwtVerify(token, new TextEncoder().encode(secret));
+    await jwtVerify(token, new TextEncoder().encode(authSecret()));
     return NextResponse.next();
   } catch {
     return NextResponse.redirect(new URL("/login", req.url));

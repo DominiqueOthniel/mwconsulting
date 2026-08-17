@@ -1,5 +1,6 @@
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { authSecret } from "@/lib/secret";
 
 export type SessionUser = {
   id: string;
@@ -9,11 +10,7 @@ export type SessionUser = {
 };
 
 function secretKey() {
-  const secret = process.env.AUTH_SECRET;
-  if (!secret) {
-    throw new Error("AUTH_SECRET manquant");
-  }
-  return new TextEncoder().encode(secret);
+  return new TextEncoder().encode(authSecret());
 }
 
 export async function createSession(user: SessionUser) {

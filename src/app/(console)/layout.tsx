@@ -19,3 +19,6 @@ export default async function ConsoleLayout({
     </div>
   );
 }
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";

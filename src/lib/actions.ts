@@ -22,22 +22,34 @@ export async function loginAction(
     return { error: "Email et mot de passe requis." };
   }
 
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
-    return { error: "Identifiants incorrects." };
-  }
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return { error: "Identifiants incorrects." };
+    }
 
-  const ok = await bcrypt.compare(password, user.passwordHash);
-  if (!ok) {
-    return { error: "Identifiants incorrects." };
-  }
+    const ok = await bcrypt.compare(password, user.passwordHash);
+    if (!ok) {
+      return { error: "Identifiants incorrects." };
+    }
 
-  await createSession({
-    id: user.id,
-    nom: user.nom,
-    email: user.email,
-    role: user.role,
-  });
+    await createSession({
+      id: user.id,
+      nom: user.nom,
+      email: user.email,
+      role: user.role,
+    });
+  } catch (error) {
+    const digest =
+      error && typeof error === "object" && "digest" in error
+        ? String((error as { digest: string }).digest)
+        : "";
+    if (digest.includes("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("loginAction", error);
+    return { error: "Connexion indisponible pour le moment." };
+  }
 
   redirect("/");
 }
