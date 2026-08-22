@@ -23,20 +23,65 @@ const WELCOME: Msg = {
   ],
 };
 
+function IconChat() {
+  return (
+    <svg
+      className="chat-fab-svg"
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
+      <path
+        d="M5 6.8A2.8 2.8 0 0 1 7.8 4h8.4A2.8 2.8 0 0 1 19 6.8v6.4A2.8 2.8 0 0 1 16.2 16H10l-3.6 2.7c-.55.4-1.3.01-1.3-.66V16A2.8 2.8 0 0 1 5 13.2V6.8Z"
+        fill="currentColor"
+      />
+      <circle cx="9" cy="10" r="1.05" fill="#0a2744" />
+      <circle cx="12" cy="10" r="1.05" fill="#0a2744" />
+      <circle cx="15" cy="10" r="1.05" fill="#0a2744" />
+    </svg>
+  );
+}
+
+function IconClose() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M7 7l10 10M17 7 7 17"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export function ChatBot() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([WELCOME]);
   const endRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (open) {
-      endRef.current?.scrollIntoView({ behavior: "smooth" });
-      inputRef.current?.focus();
+    if (!open) return;
+    const node = endRef.current;
+    if (node && bodyRef.current) {
+      bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
     }
   }, [open, messages, pending]);
+
+  function ouvrirFermer() {
+    if (open) {
+      const active = document.activeElement;
+      if (active instanceof HTMLElement) active.blur();
+      setOpen(false);
+      return;
+    }
+    setOpen(true);
+  }
 
   async function envoyer(texte: string) {
     const clean = texte.trim();
@@ -90,23 +135,29 @@ export function ChatBot() {
           className="chat-panel"
           role="dialog"
           aria-label="Assistant MW Consulting"
+          aria-modal="true"
         >
           <header className="chat-head">
-            <div>
-              <p className="chat-title">Assistant MW</p>
-              <p className="chat-sub">Reponses sur pays et procedures</p>
+            <div className="chat-head-brand">
+              <span className="chat-head-icon" aria-hidden>
+                <IconChat />
+              </span>
+              <div>
+                <p className="chat-title">Assistant MW</p>
+                <p className="chat-sub">Pays, procedures, delais</p>
+              </div>
             </div>
             <button
               type="button"
               className="chat-close"
               aria-label="Fermer le chat"
-              onClick={() => setOpen(false)}
+              onClick={ouvrirFermer}
             >
-              ×
+              <IconClose />
             </button>
           </header>
 
-          <div className="chat-body" aria-live="polite">
+          <div className="chat-body" ref={bodyRef} aria-live="polite">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -158,15 +209,18 @@ export function ChatBot() {
               Votre question
             </label>
             <input
-              ref={inputRef}
               id="chat-input"
               className="chat-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ex: Visa etudes Canada"
+              placeholder="Votre question..."
               maxLength={500}
               disabled={pending}
               autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="sentences"
+              enterKeyHint="send"
+              inputMode="text"
             />
             <button
               type="submit"
@@ -185,15 +239,13 @@ export function ChatBot() {
         className={`chat-fab ${open ? "is-open" : ""}`}
         aria-label={open ? "Fermer l assistant" : "Ouvrir l assistant"}
         aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
+        onClick={ouvrirFermer}
       >
         {open ? (
-          "×"
+          <IconClose />
         ) : (
           <>
-            <span className="chat-fab-icon" aria-hidden>
-              ✦
-            </span>
+            <IconChat />
             <span className="chat-fab-label">Assistant</span>
           </>
         )}

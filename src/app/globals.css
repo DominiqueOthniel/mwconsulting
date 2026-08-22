@@ -18,9 +18,15 @@
   --font-serif: "Fraunces", "Palatino Linotype", Georgia, serif;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 html,
 body {
   min-height: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -28,6 +34,21 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Evite le zoom iOS au focus (inputs < 16px) */
+input,
+select,
+textarea {
+  font-size: 16px;
+  touch-action: manipulation;
+}
+
+button,
+a,
+summary {
+  touch-action: manipulation;
 }
 
 .page {
@@ -142,8 +163,8 @@ body {
   color: var(--ink);
   border-radius: 6px;
   padding: 0 12px;
-  height: 40px;
-  font-size: 14px;
+  height: 44px;
+  font-size: 16px;
   outline: none;
 }
 
@@ -371,6 +392,7 @@ textarea.field {
     linear-gradient(180deg, #e8f2fa 0%, #f2f6fa 42%, #eef3f8 100%);
   color: var(--ink);
   padding-bottom: calc(var(--app-tab) + 28px + env(safe-area-inset-bottom, 0px));
+  overflow-x: hidden;
 }
 
 .app-skip {
@@ -747,11 +769,11 @@ textarea.field {
   font-weight: 650;
   text-decoration: none;
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .app-btn:active {
-  transform: scale(0.985);
+  filter: brightness(0.97);
 }
 
 .app-btn:focus-visible {
@@ -881,10 +903,15 @@ textarea.field {
 
 .app-chip-card:hover,
 .app-chip-card:focus-visible {
-  transform: translateY(-3px);
   border-color: rgba(27, 163, 224, 0.45);
   box-shadow: var(--shadow-soft);
   outline: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .app-chip-card:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .app-chip-flag {
@@ -1006,7 +1033,7 @@ textarea.field {
 
 .app-search:focus-within {
   border-color: var(--leaf);
-  box-shadow: 0 0 0 4px rgba(27, 163, 224, 0.12);
+  box-shadow: 0 6px 18px rgba(10, 39, 68, 0.03);
 }
 
 .app-search input {
@@ -1016,7 +1043,8 @@ textarea.field {
   outline: none;
   background: transparent;
   height: 50px;
-  font-size: 15px;
+  font-size: 16px;
+  line-height: 1.25;
   color: var(--ink);
 }
 
@@ -1060,10 +1088,16 @@ textarea.field {
 .app-proc-row:hover,
 .app-dest-row:focus-visible,
 .app-proc-row:focus-visible {
-  transform: translateY(-2px);
   border-color: rgba(27, 163, 224, 0.4);
   box-shadow: var(--shadow-soft);
   outline: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .app-dest-row:hover,
+  .app-proc-row:hover {
+    transform: translateY(-1px);
+  }
 }
 
 .app-dest-copy,
@@ -1314,13 +1348,14 @@ textarea.field {
 .chat {
   position: fixed;
   right: 16px;
-  bottom: calc(var(--app-tab) + 28px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(var(--app-tab) + 20px + env(safe-area-inset-bottom, 0px));
   z-index: 50;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
-  width: min(100% - 24px, 360px);
+  width: min(calc(100vw - 24px), 360px);
+  max-width: calc(100vw - 24px);
   pointer-events: none;
 }
 
@@ -1343,30 +1378,52 @@ textarea.field {
   font-weight: 650;
   cursor: pointer;
   box-shadow: 0 12px 28px rgba(10, 39, 68, 0.28);
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.chat-fab-svg {
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.chat-head-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.chat-head-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(237, 207, 110, 0.16);
+  color: var(--gold);
+  flex-shrink: 0;
 }
 
 .chat-fab.is-open {
   width: 48px;
+  min-width: 48px;
   padding: 0;
-  font-size: 22px;
   background: var(--forest);
-}
-
-.chat-fab-icon {
-  color: var(--gold);
 }
 
 .chat-panel {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: min(62vh, 520px);
+  height: min(520px, calc(100dvh - var(--app-tab) - 96px));
+  max-height: calc(100dvh - var(--app-tab) - 96px);
   border-radius: 20px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.96);
+  background: #fff;
   border: 1px solid var(--line);
   box-shadow: 0 20px 50px rgba(10, 39, 68, 0.18);
-  backdrop-filter: blur(16px);
 }
 
 .chat-head {
@@ -1374,6 +1431,7 @@ textarea.field {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-shrink: 0;
   padding: 14px 14px 12px;
   background: linear-gradient(145deg, #0a2744, #123a5c);
   color: #fff;
@@ -1394,34 +1452,36 @@ textarea.field {
 }
 
 .chat-close {
-  width: 36px;
-  height: 36px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
   border: 0;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
-  font-size: 22px;
-  line-height: 1;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .chat-body {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background:
-    radial-gradient(ellipse 80% 40% at 100% 0%, rgba(27, 163, 224, 0.08), transparent 50%),
-    #f7fafc;
+  background: #f7fafc;
 }
 
 .chat-bubble {
   max-width: 92%;
   padding: 12px 13px;
   border-radius: 16px;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   line-height: 1.45;
 }
 
@@ -1435,7 +1495,7 @@ textarea.field {
 
 .chat-bubble.is-user {
   align-self: flex-end;
-  background: linear-gradient(145deg, #1ba3e0, #0e7fb8);
+  background: #0e7fb8;
   color: #fff;
   border-bottom-right-radius: 6px;
 }
@@ -1443,6 +1503,7 @@ textarea.field {
 .chat-text {
   margin: 0;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .chat-typing {
@@ -1461,7 +1522,7 @@ textarea.field {
 .chat-link {
   display: inline-flex;
   align-items: center;
-  min-height: 32px;
+  min-height: 34px;
   padding: 0 10px;
   border-radius: 999px;
   background: var(--mist);
@@ -1476,7 +1537,7 @@ textarea.field {
   border: 1px solid var(--line);
   background: #fff;
   color: var(--forest);
-  min-height: 32px;
+  min-height: 34px;
   padding: 0 10px;
   border-radius: 999px;
   font-size: 12px;
@@ -1497,6 +1558,7 @@ textarea.field {
 .chat-form {
   display: flex;
   gap: 8px;
+  flex-shrink: 0;
   padding: 12px;
   border-top: 1px solid var(--line);
   background: #fff;
@@ -1505,30 +1567,33 @@ textarea.field {
 .chat-input {
   flex: 1;
   min-width: 0;
-  height: 44px;
+  height: 48px;
   padding: 0 12px;
   border-radius: 12px;
   border: 1px solid var(--line);
-  font-size: 14px;
+  font-size: 16px !important;
+  line-height: 1.25;
   outline: none;
   color: var(--ink);
+  background: #fff;
 }
 
 .chat-input:focus {
   border-color: var(--leaf);
-  box-shadow: 0 0 0 3px rgba(27, 163, 224, 0.12);
+  box-shadow: none;
 }
 
 .chat-send {
-  height: 44px;
+  height: 48px;
   padding: 0 14px;
   border: 0;
   border-radius: 12px;
   background: var(--leaf);
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 650;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .chat-send:disabled {
@@ -1541,10 +1606,17 @@ textarea.field {
     right: 12px;
     left: 12px;
     width: auto;
+    max-width: none;
     align-items: stretch;
   }
 
   .chat-fab {
     align-self: flex-end;
+  }
+
+  .chat-panel {
+    height: min(68dvh, calc(100dvh - var(--app-tab) - 88px));
+    max-height: calc(100dvh - var(--app-tab) - 88px);
+    border-radius: 18px;
   }
 }
