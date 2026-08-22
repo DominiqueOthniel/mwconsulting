@@ -5,6 +5,9 @@ import { authSecret } from "@/lib/secret";
 function isPublicPath(pathname: string) {
   if (pathname === "/" || pathname === "/login") return true;
   if (pathname.startsWith("/pays")) return true;
+  if (pathname.startsWith("/destinations")) return true;
+  if (pathname.startsWith("/notifications")) return true;
+  if (pathname.startsWith("/aide")) return true;
   if (pathname.startsWith("/_next")) return true;
   if (pathname === "/favicon.ico" || pathname === "/logo-mw.svg") return true;
   return false;

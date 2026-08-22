@@ -15,9 +15,14 @@ const serif = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "MW Consulting · Le TGV de l Immigration",
+  title: "MW Consulting · App immigration",
   description:
-    "Agence d immigration a Douala et Yaounde. Decouvrez nos destinations et procedures pour etudier, travailler ou rejoindre votre famille a l etranger.",
+    "Application MW Consulting: destinations, procedures, alertes et aide pour vos demarches d immigration.",
+  appleWebApp: {
+    capable: true,
+    title: "MW Consulting",
+    statusBarStyle: "default",
+  },
 };
 
 export default function RootLayout({

@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortailShell } from "@/components/PortailShell";
+import { AppShell } from "@/components/app/AppShell";
 import { DESTINATIONS, destinationParSlug, slugify } from "@/lib/portail";
 
 export function generateStaticParams() {
   return DESTINATIONS.map((d) => ({ slug: d.slug }));
 }
 
-export default async function PaysPortailPage({
+export default async function PaysAppPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -17,75 +17,53 @@ export default async function PaysPortailPage({
   if (!destination) notFound();
 
   return (
-    <PortailShell>
-      <section className="portail-country-hero">
-        <div className="portail-country-hero-inner">
-          <Link href="/#destinations" className="portail-back">
-            Toutes les destinations
-          </Link>
-          <p className="portail-country-flag" aria-hidden>
-            {destination.drapeau}
-          </p>
-          <h1 className="portail-hero-brand">{destination.nom}</h1>
-          <p className="portail-hero-line">{destination.ambiance}</p>
-          <p className="portail-hero-lead">{destination.accroche}</p>
-          <p className="portail-country-for">
-            Pour qui: {destination.pourQui}
-          </p>
-        </div>
+    <AppShell title={destination.nom} backHref="/destinations">
+      <section className="app-country">
+        <p className="app-country-flag" aria-hidden>
+          {destination.drapeau}
+        </p>
+        <h1 className="app-h1">{destination.nom}</h1>
+        <p className="app-lead">{destination.accroche}</p>
+        <p className="app-muted">{destination.pourQui}</p>
       </section>
 
-      <section className="portail-section">
-        <div className="portail-section-head">
-          <p className="portail-kicker">Procedures</p>
-          <h2 className="portail-title">
-            Ce que nous proposons pour {destination.nom}
+      <section className="app-block" aria-labelledby="procs">
+        <div className="app-block-head">
+          <h2 id="procs" className="app-h2">
+            Procedures
           </h2>
-          <p className="portail-lead">
-            Cliquez une procedure pour voir les etapes typiques. Votre dossier
-            sera toujours personnalise avec un conseiller.
-          </p>
         </div>
-        <div className="portail-proc-list">
+        <ul className="app-proc-list" role="list">
           {destination.procedures.map((proc) => (
-            <Link
-              key={proc.nom}
-              href={`/pays/${destination.slug}/${slugify(proc.nom)}`}
-              className="portail-proc"
-            >
-              <div>
-                <h3>{proc.nom}</h3>
-                <p>{proc.resume}</p>
-              </div>
-              <div className="portail-proc-side">
-                <span className="portail-proc-delai">{proc.delai}</span>
-                <span className="portail-proc-go">Voir les etapes</span>
-              </div>
-            </Link>
+            <li key={proc.nom}>
+              <Link
+                href={`/pays/${destination.slug}/${slugify(proc.nom)}`}
+                className="app-proc-row"
+              >
+                <span className="app-proc-copy">
+                  <span className="app-proc-name">{proc.nom}</span>
+                  <span className="app-proc-resume">{proc.resume}</span>
+                  <span className="app-proc-delai">{proc.delai}</span>
+                </span>
+                <span className="app-chevron" aria-hidden>
+                  ›
+                </span>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
-      <section className="portail-section portail-section-alt">
-        <div className="portail-contact">
-          <div>
-            <p className="portail-kicker">Et apres ?</p>
-            <h2 className="portail-title">On prepare votre dossier {destination.nom}</h2>
-            <p className="portail-lead">
-              Un conseiller MW Consulting vous recoit, verifie votre eligibilite
-              et construit la checklist adaptee a votre situation.
-            </p>
-          </div>
-          <div className="portail-contact-actions">
-            <a className="btn btn-primary" href="mailto:contact@mwconsulting.cm">
-              Prendre contact
-            </a>
-            <Link href="/#destinations" className="btn btn-ghost">
-              Autre destination
-            </Link>
-          </div>
+      <section className="app-block">
+        <div className="app-actions app-actions-stack">
+          <a className="app-btn app-btn-primary" href="mailto:contact@mwconsulting.cm">
+            Demarrer avec un conseiller
+          </a>
+          <Link href="/destinations" className="app-btn app-btn-secondary">
+            Autre pays
+          </Link>
         </div>
       </section>
-    </PortailShell>
+    </AppShell>
   );
 }
