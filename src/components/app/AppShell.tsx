@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/BrandLogo";
+import { ChatBot } from "@/components/app/ChatBot";
 import { NOTIFICATIONS, STORAGE_KEY } from "@/lib/notifications";
 
 const tabs = [
@@ -190,6 +191,8 @@ export function AppShell({
           );
         })}
       </nav>
+
+      <ChatBot />
     </div>
   );
 }
