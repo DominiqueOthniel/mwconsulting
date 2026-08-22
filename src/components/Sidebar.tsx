@@ -7,7 +7,7 @@ import type { SessionUser } from "@/lib/auth";
 import { BrandLogo } from "@/components/BrandLogo";
 
 const links = [
-  { href: "/", label: "Tableau de bord" },
+  { href: "/relais", label: "Tableau de bord" },
   { href: "/dossiers", label: "Dossiers" },
   { href: "/agenda", label: "Agenda" },
   { href: "/audit", label: "Journal" },
@@ -27,8 +27,8 @@ export function Sidebar({ user }: { user: SessionUser }) {
       <nav className="flex flex-1 flex-col py-4">
         {links.map((link) => {
           const active =
-            link.href === "/"
-              ? pathname === "/"
+            link.href === "/relais"
+              ? pathname === "/relais"
               : pathname.startsWith(link.href);
           return (
             <Link
@@ -51,6 +51,9 @@ export function Sidebar({ user }: { user: SessionUser }) {
             Se deconnecter
           </button>
         </form>
+        <Link href="/" className="mt-3 block text-xs text-paper/50 hover:text-paper/80">
+          Voir le portail public
+        </Link>
       </div>
     </aside>
   );

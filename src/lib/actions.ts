@@ -52,7 +52,7 @@ export async function loginAction(
     return { error: "Connexion indisponible pour le moment." };
   }
 
-  redirect("/");
+  redirect("/relais");
 }
 
 export async function logoutAction() {
@@ -129,7 +129,7 @@ export async function creerDossierAction(
     `Ouverture ${referenceInterne} vers ${paysDestination} pour ${prenom} ${nom}`,
   );
 
-  revalidatePath("/");
+  revalidatePath("/relais");
   revalidatePath("/dossiers");
   redirect(`/dossiers/${dossier.id}`);
 }
@@ -143,7 +143,7 @@ export async function majStatutDossierAction(formData: FormData) {
   await prisma.dossier.update({ where: { id }, data: { statut } });
   await ecrireAudit(session, "MISE_A_JOUR", "Dossier", id, `Statut: ${statut}`);
   revalidatePath(`/dossiers/${id}`);
-  revalidatePath("/");
+  revalidatePath("/relais");
   revalidatePath("/dossiers");
 }
 
@@ -167,7 +167,7 @@ export async function majPaysDestinationAction(formData: FormData) {
   );
   revalidatePath(`/dossiers/${id}`);
   revalidatePath(`/dossiers/${id}/fiche`);
-  revalidatePath("/");
+  revalidatePath("/relais");
   revalidatePath("/dossiers");
 }
 
@@ -220,7 +220,7 @@ export async function ajouterPersonneAction(
   );
 
   revalidatePath(`/dossiers/${dossierId}`);
-  revalidatePath("/");
+  revalidatePath("/relais");
   return { ok: true };
 }
 
@@ -242,7 +242,7 @@ export async function retirerPersonneAction(formData: FormData) {
     `${personne.prenom} ${personne.nom} retire du dossier`,
   );
   revalidatePath(`/dossiers/${dossierId}`);
-  revalidatePath("/");
+  revalidatePath("/relais");
 }
 
 export async function ajouterEvenementAction(
@@ -291,7 +291,7 @@ export async function ajouterEvenementAction(
   );
 
   revalidatePath(`/dossiers/${dossierId}`);
-  revalidatePath("/");
+  revalidatePath("/relais");
   revalidatePath("/agenda");
   return { ok: true };
 }
@@ -307,7 +307,7 @@ export async function majStatutEvenementAction(formData: FormData) {
   await ecrireAudit(session, "MISE_A_JOUR", "Evenement", id, `Statut evenement: ${statut}`);
   revalidatePath(`/dossiers/${dossierId}`);
   revalidatePath("/agenda");
-  revalidatePath("/");
+  revalidatePath("/relais");
 }
 
 export async function ajouterEmploiAction(

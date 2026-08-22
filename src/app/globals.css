@@ -14,6 +14,8 @@
   --rule: #d3dde8;
   --sage: #5d7386;
   --white: #ffffff;
+  --font-sans: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  --font-serif: "Fraunces", "Palatino Linotype", Georgia, serif;
 }
 
 html,
@@ -25,6 +27,7 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
+  font-family: var(--font-sans);
 }
 
 .page {
@@ -345,5 +348,557 @@ textarea.field {
 @media print {
   .sidebar {
     display: none;
+  }
+}
+
+/* Portail public */
+
+.portail {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(27, 163, 224, 0.18), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 90% 0%, rgba(237, 207, 110, 0.16), transparent 50%),
+    linear-gradient(180deg, #eaf3fa 0%, var(--paper) 38%, #eef4f9 100%);
+}
+
+.portail-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 28px;
+  background: rgba(10, 39, 68, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 3px solid var(--gold);
+}
+
+.portail-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--paper);
+}
+
+.portail-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.portail-brand-text strong {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.portail-brand-text em {
+  font-style: normal;
+  font-size: 11px;
+  color: rgba(243, 246, 250, 0.65);
+}
+
+.portail-nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+}
+
+.portail-nav-links a {
+  color: rgba(243, 246, 250, 0.82);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.portail-nav-links a:hover {
+  color: #fff;
+}
+
+.portail-nav-login {
+  padding: 8px 14px !important;
+  border-radius: 6px;
+  border: 1px solid rgba(237, 207, 110, 0.45);
+  color: var(--gold) !important;
+}
+
+.portail-nav-login:hover {
+  background: rgba(237, 207, 110, 0.12);
+}
+
+.portail-hero {
+  position: relative;
+  min-height: min(92vh, 860px);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background:
+    linear-gradient(160deg, rgba(10, 39, 68, 0.92) 0%, rgba(10, 39, 68, 0.72) 45%, rgba(14, 70, 110, 0.55) 100%),
+    radial-gradient(circle at 70% 30%, rgba(27, 163, 224, 0.35), transparent 45%),
+    linear-gradient(135deg, #0a2744, #134a72 55%, #1ba3e0);
+  color: var(--paper);
+  border-bottom: 4px solid var(--gold);
+}
+
+.portail-hero-glow {
+  position: absolute;
+  inset: auto -10% -30% 40%;
+  height: 70%;
+  background: radial-gradient(ellipse, rgba(237, 207, 110, 0.22), transparent 65%);
+  pointer-events: none;
+  animation: drift 12s ease-in-out infinite alternate;
+}
+
+.portail-hero-inner {
+  position: relative;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 72px 28px 80px;
+}
+
+.portail-kicker {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.portail-hero-brand {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 8vw, 5.6rem);
+  font-weight: 550;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.portail-hero-line {
+  margin: 14px 0 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 400;
+  color: rgba(243, 246, 250, 0.92);
+}
+
+.portail-hero-lead {
+  margin: 22px 0 0;
+  max-width: 34rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: rgba(243, 246, 250, 0.78);
+}
+
+.portail-hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.portail-btn-ghost {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.portail-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.portail-section {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 72px 28px;
+}
+
+.portail-section-alt {
+  max-width: none;
+  background: linear-gradient(180deg, rgba(231, 243, 251, 0.7), rgba(243, 246, 250, 0.4));
+  border-block: 1px solid var(--rule);
+}
+
+.portail-section-alt > .portail-section-head,
+.portail-section-alt > .portail-steps,
+.portail-section-alt > .portail-contact {
+  width: 100%;
+  max-width: 1120px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
+.portail-section-alt > .portail-steps,
+.portail-section-alt > .portail-contact {
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
+.portail-section-head {
+  max-width: 40rem;
+  margin-bottom: 36px;
+}
+
+.portail-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 550;
+  line-height: 1.15;
+  color: var(--forest);
+}
+
+.portail-lead {
+  margin: 12px 0 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--sage);
+}
+
+.portail-dest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.portail-dest {
+  display: flex;
+  gap: 14px;
+  padding: 18px 16px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(135deg, rgba(27, 163, 224, 0.35), rgba(237, 207, 110, 0.35)) border-box;
+  box-shadow: 0 10px 28px rgba(12, 27, 46, 0.05);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: rise 0.55s ease both;
+}
+
+.portail-dest:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(12, 27, 46, 0.1);
+}
+
+.portail-dest-flag {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.portail-dest-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.portail-dest-name {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--forest);
+}
+
+.portail-dest-hook {
+  font-size: 0.92rem;
+  line-height: 1.4;
+  color: var(--sage);
+}
+
+.portail-dest-meta {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--leaf);
+}
+
+.portail-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.portail-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: start;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.portail-step:last-child {
+  border-bottom: 0;
+}
+
+.portail-step-num {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  color: var(--leaf);
+  line-height: 1;
+}
+
+.portail-step h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--forest);
+}
+
+.portail-step p {
+  margin: 6px 0 0;
+  color: var(--sage);
+  line-height: 1.5;
+}
+
+.portail-contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.portail-contact-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.portail-contact-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--sage);
+}
+
+.portail-footer {
+  margin-top: 24px;
+  padding: 36px 28px 48px;
+  background: var(--forest);
+  color: rgba(243, 246, 250, 0.75);
+  border-top: 3px solid var(--gold);
+}
+
+.portail-footer-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.portail-footer-brand {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: #fff;
+}
+
+.portail-footer-tag {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--gold);
+}
+
+.portail-footer-meta {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.portail-country-hero {
+  background:
+    linear-gradient(160deg, rgba(10, 39, 68, 0.94), rgba(19, 74, 114, 0.85)),
+    linear-gradient(120deg, #0a2744, #1ba3e0);
+  color: var(--paper);
+  border-bottom: 4px solid var(--gold);
+}
+
+.portail-country-hero-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 56px 28px 64px;
+}
+
+.portail-back {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: rgba(243, 246, 250, 0.7);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.portail-back:hover {
+  color: #fff;
+}
+
+.portail-country-flag {
+  margin: 0 0 8px;
+  font-size: 2.4rem;
+}
+
+.portail-country-for {
+  margin: 18px 0 0;
+  font-size: 0.95rem;
+  color: rgba(243, 246, 250, 0.7);
+}
+
+.portail-proc-list {
+  display: grid;
+  gap: 12px;
+}
+
+.portail-proc {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 20px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--rule);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.portail-proc:hover {
+  border-color: var(--leaf);
+  transform: translateX(4px);
+}
+
+.portail-proc h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  color: var(--forest);
+}
+
+.portail-proc p {
+  margin: 8px 0 0;
+  max-width: 36rem;
+  color: var(--sage);
+  line-height: 1.45;
+}
+
+.portail-proc-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  justify-content: center;
+}
+
+.portail-proc-delai {
+  font-size: 12px;
+  color: var(--sage);
+  text-align: right;
+  max-width: 14rem;
+}
+
+.portail-proc-go {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--leaf);
+}
+
+.portail-proc-title {
+  font-size: clamp(2.2rem, 6vw, 3.6rem) !important;
+}
+
+.portail-proc-badge {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(237, 207, 110, 0.18);
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.portail-proc-hero .portail-kicker {
+  color: rgba(243, 246, 250, 0.7);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-40px);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.7s ease both;
+}
+
+.delay-1 {
+  animation-delay: 0.08s;
+}
+.delay-2 {
+  animation-delay: 0.16s;
+}
+.delay-3 {
+  animation-delay: 0.24s;
+}
+.delay-4 {
+  animation-delay: 0.32s;
+}
+
+@media (max-width: 768px) {
+  .portail-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 18px;
+  }
+
+  .portail-nav-links {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .portail-hero-inner,
+  .portail-section,
+  .portail-country-hero-inner {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .portail-hero {
+    min-height: 78vh;
+    align-items: center;
+  }
+
+  .portail-proc-side {
+    align-items: flex-start;
   }
 }

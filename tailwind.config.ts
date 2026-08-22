@@ -16,17 +16,8 @@ const config: Config = {
         sage: "var(--sage)",
       },
       fontFamily: {
-        sans: [
-          "Segoe UI",
-          "system-ui",
-          "sans-serif",
-        ],
-        serif: [
-          "Palatino Linotype",
-          "Palatino",
-          "Georgia",
-          "serif",
-        ],
+        sans: ["var(--font-sans)", "Segoe UI", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Palatino Linotype", "Georgia", "serif"],
       },
     },
   },

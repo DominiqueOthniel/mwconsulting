@@ -25,6 +25,11 @@ export default function LoginPage() {
           </div>
           <h2 className="mb-6 font-serif text-2xl text-ink">Connexion conseiller</h2>
           <LoginForm />
+          <p className="mt-6 text-center text-sm text-sage">
+            <a href="/" className="link">
+              Retour au portail public
+            </a>
+          </p>
         </div>
       </section>
     </div>
