@@ -13,9 +13,9 @@ export default async function ConsoleLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="console-shell">
       <Sidebar user={session} />
-      <main className="min-w-0 flex-1">{children}</main>
+      <main className="console-main">{children}</main>
     </div>
   );
 }

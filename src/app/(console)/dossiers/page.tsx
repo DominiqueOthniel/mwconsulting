@@ -105,26 +105,33 @@ export default async function DossiersPage({
             <tbody>
               {dossiers.map((d) => (
                 <tr key={d.id}>
-                  <td>
+                  <td data-label="Reference">
                     <Link className="link" href={`/dossiers/${d.id}`}>
                       {d.referenceInterne}
                     </Link>
+                    {d.source === "PORTAIL" ? (
+                      <span className="mt-0.5 block text-xs text-leaf">
+                        Portail
+                      </span>
+                    ) : null}
                     {d.numeroDossier ? (
                       <span className="mt-0.5 block text-xs text-sage">
                         {d.numeroDossier}
                       </span>
                     ) : null}
                   </td>
-                  <td>{principalName(d.personnes)}</td>
-                  <td>
+                  <td data-label="Principal">{principalName(d.personnes)}</td>
+                  <td data-label="Pays">
                     <span className="chip">{d.paysDestination}</span>
                   </td>
-                  <td>{d.programme}</td>
-                  <td>{d.personnes.length}</td>
-                  <td>
+                  <td data-label="Programme">{d.programme}</td>
+                  <td data-label="Famille">{d.personnes.length}</td>
+                  <td data-label="Statut">
                     <StatusBadge value={d.statut} />
                   </td>
-                  <td className="text-sage">{d.conseiller.nom}</td>
+                  <td data-label="Conseiller" className="text-sage">
+                    {d.conseiller.nom}
+                  </td>
                 </tr>
               ))}
             </tbody>

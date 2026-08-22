@@ -11,17 +11,16 @@ import { configPays } from "@/lib/pays";
 
 export default async function DashboardPage() {
   const maintenant = new Date();
-  const dansSeptJours = new Date(maintenant.getTime() + 7 * 24 * 60 * 60 * 1000);
   const dansDeuxMois = new Date(maintenant.getTime() + 60 * 24 * 60 * 60 * 1000);
 
-  const [total, actifs, semaine, evenements, alertesDossiers, parPays] =
+  const [total, actifs, nouvellesDemandes, evenements, alertesDossiers, parPays] =
     await Promise.all([
       prisma.dossier.count(),
       prisma.dossier.count({ where: { statut: { not: "CLOS" } } }),
-      prisma.evenement.count({
+      prisma.dossier.count({
         where: {
-          statut: "PLANIFIE",
-          dateHeure: { gte: maintenant, lte: dansSeptJours },
+          source: "PORTAIL",
+          statut: { in: ["SOUMIS", "BROUILLON"] },
         },
       }),
       prisma.evenement.findMany({
@@ -61,9 +60,14 @@ export default async function DashboardPage() {
       kicker="Aujourd'hui"
       title="Tableau de bord"
       actions={
-        <Link href="/dossiers/nouveau" className="btn btn-primary">
-          Nouveau dossier
-        </Link>
+        <div className="console-actions">
+          <Link href="/demandes" className="btn btn-ghost">
+            Demandes{nouvellesDemandes > 0 ? ` (${nouvellesDemandes})` : ""}
+          </Link>
+          <Link href="/dossiers/nouveau" className="btn btn-primary">
+            Nouveau dossier
+          </Link>
+        </div>
       }
     >
       <section className="stat-grid">
@@ -78,9 +82,13 @@ export default async function DashboardPage() {
           <p className="stat-detail">Hors clos</p>
         </article>
         <article className="card stat">
-          <p className="kicker">7 prochains jours</p>
-          <p className="stat-value">{semaine}</p>
-          <p className="stat-detail">Biometrie, medical, entretien</p>
+          <p className="kicker">Demandes portail</p>
+          <p className="stat-value">{nouvellesDemandes}</p>
+          <p className="stat-detail">
+            <Link href="/demandes" className="link">
+              A traiter
+            </Link>
+          </p>
         </article>
       </section>
 
@@ -146,17 +154,17 @@ export default async function DashboardPage() {
               <tbody>
                 {evenements.map((e) => (
                   <tr key={e.id}>
-                    <td>{formatDateTime(e.dateHeure)}</td>
-                    <td>
+                    <td data-label="Quand">{formatDateTime(e.dateHeure)}</td>
+                    <td data-label="Pays">
                       <span className="chip">{e.dossier.paysDestination}</span>
                     </td>
-                    <td>
+                    <td data-label="Type">
                       <StatusBadge
                         value={e.type === "ENTRETIEN" ? "ENTRETIEN" : "SOUMIS"}
                       />
                       <span className="ml-2">{labelsEvenement[e.type]}</span>
                     </td>
-                    <td>
+                    <td data-label="Dossier">
                       <Link className="link" href={`/dossiers/${e.dossierId}`}>
                         {e.dossier.referenceInterne}
                       </Link>
@@ -164,7 +172,7 @@ export default async function DashboardPage() {
                         {principalName(e.dossier.personnes)}
                       </span>
                     </td>
-                    <td>{e.lieu}</td>
+                    <td data-label="Lieu">{e.lieu}</td>
                   </tr>
                 ))}
               </tbody>

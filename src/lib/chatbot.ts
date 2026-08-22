@@ -153,15 +153,19 @@ export function repondreChat(message: string): ChatReply {
       "yaounde",
       "rendez vous agence",
       "parler",
+      "demarrer",
+      "dossier",
+      "soumettre",
+      "demande",
     ])
   ) {
     return {
-      text: "Pour demarrer un dossier, ecrivez a contact@mwconsulting.cm ou passez a Douala / Yaounde sur rendez-vous. Un conseiller vous oriente selon votre pays et votre procedure.",
+      text: "Pour demarrer, choisissez un pays puis une procedure, et cliquez sur « Demarrer mon dossier ». Vous remplissez vos infos dans l app: MW Consulting recoit la demande dans Relais.",
       links: [
-        { label: "Page Aide", href: "/aide" },
-        { label: "Voir les destinations", href: "/destinations" },
+        { label: "Choisir une destination", href: "/destinations" },
+        { label: "Aide", href: "/aide" },
       ],
-      suggestions: ["Visa etudes France", "Combien de temps pour le Canada ?"],
+      suggestions: ["Visa etudes Canada", "Quels pays proposez-vous ?"],
     };
   }
 

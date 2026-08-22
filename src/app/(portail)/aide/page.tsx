@@ -4,7 +4,11 @@ import { AppShell } from "@/components/app/AppShell";
 const faqs = [
   {
     q: "Par ou commencer ?",
-    a: "Ouvrez Destinations, choisissez un pays, puis une procedure. Ensuite contactez l agence pour ouvrir votre dossier.",
+    a: "Ouvrez Destinations, choisissez un pays, puis une procedure. Cliquez sur Demarrer mon dossier et envoyez vos infos dans l app.",
+  },
+  {
+    q: "Que se passe-t-il apres l envoi ?",
+    a: "Votre demande arrive dans Relais chez MW Consulting. Un conseiller prend en charge et vous recontacte.",
   },
   {
     q: "Combien de temps ca prend ?",
@@ -22,21 +26,18 @@ export default function AidePage() {
       <section className="app-page-head">
         <h1 className="app-h1">On est la pour vous</h1>
         <p className="app-lead">
-          Une question, un doute, un rendez-vous a preparer: ecrivez-nous ou
-          passez a l agence.
+          Tout se passe dans l app: choix du pays, procedure, puis envoi de votre
+          demande a l equipe MW.
         </p>
       </section>
 
       <section className="app-block">
         <div className="app-actions app-actions-stack">
-          <a className="app-btn app-btn-primary" href="mailto:contact@mwconsulting.cm">
-            Ecrire a MW Consulting
-          </a>
-          <Link href="/destinations" className="app-btn app-btn-secondary">
-            Voir les destinations
+          <Link href="/destinations" className="app-btn app-btn-primary">
+            Choisir une destination
           </Link>
         </div>
-        <p className="app-muted app-center">Douala · Yaounde · Sur rendez-vous</p>
+        <p className="app-muted app-center">Douala · Yaounde · Suivi dans Relais</p>
       </section>
 
       <section className="app-block" aria-labelledby="faq">

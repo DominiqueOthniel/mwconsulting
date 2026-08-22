@@ -25,14 +25,14 @@ export default async function AuditPage() {
             <tbody>
               {logs.map((log) => (
                 <tr key={log.id}>
-                  <td className="whitespace-nowrap text-sage">
+                  <td data-label="Quand" className="whitespace-nowrap text-sage">
                     {formatDateTime(log.createdAt)}
                   </td>
-                  <td>{log.user?.nom ?? "Systeme"}</td>
-                  <td>
+                  <td data-label="Qui">{log.user?.nom ?? "Systeme"}</td>
+                  <td data-label="Action">
                     {log.action} · {log.entite}
                   </td>
-                  <td>{log.details}</td>
+                  <td data-label="Detail">{log.details}</td>
                 </tr>
               ))}
             </tbody>

@@ -134,6 +134,125 @@ export async function creerDossierAction(
   redirect(`/dossiers/${dossier.id}`);
 }
 
+async function conseillerAccueilId() {
+  const admin = await prisma.user.findFirst({
+    where: { role: "ADMIN" },
+    orderBy: { createdAt: "asc" },
+  });
+  if (admin) return admin.id;
+  const any = await prisma.user.findFirst({ orderBy: { createdAt: "asc" } });
+  if (!any) throw new Error("Aucun conseiller disponible");
+  return any.id;
+}
+
+export async function soumettreDemandePortailAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const prenom = String(formData.get("prenom") ?? "").trim();
+  const nom = String(formData.get("nom") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const telephone = String(formData.get("telephone") ?? "").trim();
+  const dateNaissance = String(formData.get("dateNaissance") ?? "").trim();
+  const paysResidence = String(formData.get("paysResidence") ?? "Cameroun").trim();
+  const message = String(formData.get("message") ?? "").trim();
+  const programme = String(formData.get("programme") ?? "").trim();
+  const paysDestination = normaliserPays(
+    String(formData.get("paysDestination") ?? "").trim(),
+  );
+
+  if (!prenom || !nom || !email || !telephone || !programme || !paysDestination) {
+    return {
+      error: "Prenom, nom, email, telephone, pays et programme sont requis.",
+    };
+  }
+  if (!email.includes("@")) {
+    return { error: "Adresse email invalide." };
+  }
+
+  try {
+    const referenceInterne = await prochaineReference();
+    const conseillerId = await conseillerAccueilId();
+    const notes = [
+      "Demande recue via le portail public.",
+      message ? `Message client: ${message}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const dossier = await prisma.dossier.create({
+      data: {
+        referenceInterne,
+        programme,
+        paysDestination,
+        paysResidence: paysResidence || "Cameroun",
+        email,
+        telephone,
+        source: "PORTAIL",
+        statut: "SOUMIS",
+        notes,
+        conseillerId,
+        personnes: {
+          create: {
+            roleFamilial: "PRINCIPAL",
+            prenom,
+            nom,
+            dateNaissance: dateNaissance || null,
+            accompagne: true,
+            doitAssisterEntretien: true,
+          },
+        },
+      },
+    });
+
+    await ecrireAudit(
+      null,
+      "CREATION",
+      "Dossier",
+      dossier.id,
+      `Demande portail ${referenceInterne}: ${prenom} ${nom} · ${paysDestination} · ${programme}`,
+    );
+
+    revalidatePath("/relais");
+    revalidatePath("/dossiers");
+    revalidatePath("/demandes");
+    redirect(`/demande/merci?ref=${encodeURIComponent(referenceInterne)}`);
+  } catch (error) {
+    const digest =
+      error && typeof error === "object" && "digest" in error
+        ? String((error as { digest: string }).digest)
+        : "";
+    if (digest.includes("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("soumettreDemandePortailAction", error);
+    return { error: "Envoi impossible pour le moment. Reessayez." };
+  }
+}
+
+export async function prendreEnChargeAction(formData: FormData) {
+  const session = await requireSession();
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+
+  await prisma.dossier.update({
+    where: { id },
+    data: { conseillerId: session.id },
+  });
+  await ecrireAudit(
+    session,
+    "MISE_A_JOUR",
+    "Dossier",
+    id,
+    `Prise en charge par ${session.nom}`,
+  );
+  revalidatePath(`/dossiers/${id}`);
+  revalidatePath("/demandes");
+  revalidatePath("/relais");
+  revalidatePath("/dossiers");
+  redirect(`/dossiers/${id}`);
+}
+
 export async function majStatutDossierAction(formData: FormData) {
   const session = await requireSession();
   const id = String(formData.get("id") ?? "");

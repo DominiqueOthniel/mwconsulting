@@ -62,9 +62,12 @@ export default async function PaysAppPage({
 
       <section className="app-block">
         <div className="app-actions app-actions-stack">
-          <a className="app-btn app-btn-primary" href="mailto:contact@mwconsulting.cm">
-            Demarrer avec un conseiller
-          </a>
+          <Link
+            href={`/pays/${destination.slug}/${slugify(destination.procedures[0].nom)}/demander`}
+            className="app-btn app-btn-primary"
+          >
+            Demarrer mon dossier
+          </Link>
           <Link href="/destinations" className="app-btn app-btn-secondary">
             Autre pays
           </Link>

@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import type { SessionUser } from "@/lib/auth";
 
 export async function ecrireAudit(
-  user: SessionUser,
+  user: SessionUser | null,
   action: string,
   entite: string,
   entiteId: string,
@@ -10,7 +10,7 @@ export async function ecrireAudit(
 ) {
   await prisma.auditLog.create({
     data: {
-      userId: user.id,
+      userId: user?.id ?? null,
       action,
       entite,
       entiteId,

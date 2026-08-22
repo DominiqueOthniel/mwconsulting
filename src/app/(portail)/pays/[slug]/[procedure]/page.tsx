@@ -60,9 +60,12 @@ export default async function ProcedureAppPage({
 
       <section className="app-block">
         <div className="app-actions app-actions-stack">
-          <a className="app-btn app-btn-primary" href="mailto:contact@mwconsulting.cm">
-            Contacter un conseiller
-          </a>
+          <Link
+            href={`/pays/${destination.slug}/${slugify(procedure.nom)}/demander`}
+            className="app-btn app-btn-primary"
+          >
+            Demarrer mon dossier
+          </Link>
           <Link
             href={`/pays/${destination.slug}`}
             className="app-btn app-btn-secondary"

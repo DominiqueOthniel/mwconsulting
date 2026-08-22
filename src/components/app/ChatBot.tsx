@@ -15,11 +15,11 @@ type Msg = {
 const WELCOME: Msg = {
   id: "welcome",
   role: "bot",
-  text: "Bonjour, je suis l assistant MW. Posez une question sur un pays, une procedure, un delai ou un rendez-vous.",
+  text: "Bonjour, je suis l assistant MW. Choisissez un pays et une procedure, puis demarrez votre dossier dans l app.",
   suggestions: [
     "Quels pays proposez-vous ?",
     "Visa etudes Canada",
-    "Comment ca marche ?",
+    "Comment demarrer un dossier ?",
   ],
 };
 

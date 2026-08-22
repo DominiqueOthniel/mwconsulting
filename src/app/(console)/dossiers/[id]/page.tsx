@@ -24,6 +24,7 @@ import {
   majPaysDestinationAction,
   majStatutDossierAction,
   majStatutEvenementAction,
+  prendreEnChargeAction,
   retirerPersonneAction,
 } from "@/lib/actions";
 
@@ -61,13 +62,21 @@ export default async function DossierPage({
       kicker={dossier.referenceInterne}
       title={principalName(dossier.personnes)}
       actions={
-        <div className="flex flex-wrap items-end gap-2">
+        <div className="console-actions">
+          {dossier.source === "PORTAIL" ? (
+            <form action={prendreEnChargeAction}>
+              <input type="hidden" name="id" value={dossier.id} />
+              <button className="btn btn-primary" type="submit">
+                Prendre en charge
+              </button>
+            </form>
+          ) : null}
           <Link href={`/dossiers/${dossier.id}/fiche`} className="btn btn-ghost">
             Fiche convocation
           </Link>
-          <form action={majPaysDestinationAction} className="flex flex-wrap items-end gap-2">
+          <form action={majPaysDestinationAction} className="console-action-row">
             <input type="hidden" name="id" value={dossier.id} />
-            <div>
+            <div className="console-action-field">
               <label className="lbl" htmlFor="paysDestination">
                 Pays
               </label>
@@ -81,9 +90,9 @@ export default async function DossierPage({
               Maj
             </button>
           </form>
-          <form action={majStatutDossierAction} className="flex items-end gap-2">
+          <form action={majStatutDossierAction} className="console-action-row">
             <input type="hidden" name="id" value={dossier.id} />
-            <div>
+            <div className="console-action-field">
               <label className="lbl" htmlFor="statut">
                 Statut
               </label>
@@ -110,6 +119,7 @@ export default async function DossierPage({
       <p className="-mt-5 mb-6 text-sm text-sage">
         {dossier.paysDestination} · {dossier.programme} · {config.autorite} ·{" "}
         {dossier.conseiller.nom}
+        {dossier.source === "PORTAIL" ? " · Origine portail" : ""}
       </p>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -123,6 +133,13 @@ export default async function DossierPage({
           value={dossier.numeroDossier ?? "Non renseigne"}
         />
         <Meta label="Residence" value={dossier.paysResidence} />
+        <Meta label="Email" value={dossier.email ?? "Non renseigne"} />
+        <Meta label="Telephone" value={dossier.telephone ?? "Non renseigne"} />
+        <Meta
+          label="Source"
+          value={dossier.source === "PORTAIL" ? "Portail client" : "Relais"}
+        />
+        <Meta label="Statut" value={labelsStatut[dossier.statut] ?? dossier.statut} />
       </div>
 
       {entretien && nonAccompagnants.length > 0 ? (
@@ -262,15 +279,19 @@ export default async function DossierPage({
                     <tbody>
                       {emploi.bulletins.map((b) => (
                         <tr key={b.id}>
-                          <td>
+                          <td data-label="Periode">
                             {b.periode} {b.annee}
                           </td>
-                          <td>{formatFcfa(b.salaireBase)}</td>
-                          <td>{formatFcfa(b.cnpsRetraite + b.cnpsLogement)}</td>
-                          <td>{formatFcfa(b.irpp)}</td>
-                          <td>{formatFcfa(b.totalDeductions)}</td>
-                          <td>{formatFcfa(b.salaireNet)}</td>
-                          <td>{b.dateVisa ?? ""}</td>
+                          <td data-label="Base">{formatFcfa(b.salaireBase)}</td>
+                          <td data-label="CNPS">
+                            {formatFcfa(b.cnpsRetraite + b.cnpsLogement)}
+                          </td>
+                          <td data-label="IRPP">{formatFcfa(b.irpp)}</td>
+                          <td data-label="Deductions">
+                            {formatFcfa(b.totalDeductions)}
+                          </td>
+                          <td data-label="Net">{formatFcfa(b.salaireNet)}</td>
+                          <td data-label="Visa">{b.dateVisa ?? ""}</td>
                         </tr>
                       ))}
                     </tbody>
