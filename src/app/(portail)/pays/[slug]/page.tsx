@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app/AppShell";
+import { SoftCover } from "@/components/app/SoftCover";
 import { DESTINATIONS, destinationParSlug, slugify } from "@/lib/portail";
 
 export function generateStaticParams() {
@@ -18,14 +19,19 @@ export default async function PaysAppPage({
 
   return (
     <AppShell title={destination.nom} backHref="/destinations">
-      <section className="app-country">
-        <p className="app-country-flag" aria-hidden>
-          {destination.drapeau}
-        </p>
-        <h1 className="app-h1">{destination.nom}</h1>
-        <p className="app-lead">{destination.accroche}</p>
-        <p className="app-muted">{destination.pourQui}</p>
+      <section className="app-country-banner">
+        <SoftCover src={destination.image} priority className="app-media-banner" />
+        <div className="app-country-veil" aria-hidden />
+        <div className="app-country-banner-content">
+          <p className="app-country-flag" aria-hidden>
+            {destination.drapeau}
+          </p>
+          <h1 className="app-h1 app-h1-on-dark">{destination.nom}</h1>
+          <p className="app-lead app-lead-on-dark">{destination.accroche}</p>
+        </div>
       </section>
+
+      <p className="app-muted app-country-for">{destination.pourQui}</p>
 
       <section className="app-block" aria-labelledby="procs">
         <div className="app-block-head">

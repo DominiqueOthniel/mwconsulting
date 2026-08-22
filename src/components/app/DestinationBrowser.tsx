@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { DestinationPortail } from "@/lib/portail";
@@ -56,8 +57,17 @@ export function DestinationBrowser({
           {filtered.map((d) => (
             <li key={d.slug}>
               <Link href={`/pays/${d.slug}`} className="app-dest-row">
-                <span className="app-dest-flag" aria-hidden>
-                  {d.drapeau}
+                <span className="app-dest-thumb">
+                  <Image
+                    src={d.image}
+                    alt=""
+                    width={56}
+                    height={56}
+                    className="app-dest-thumb-img"
+                  />
+                  <span className="app-dest-thumb-flag" aria-hidden>
+                    {d.drapeau}
+                  </span>
                 </span>
                 <span className="app-dest-copy">
                   <span className="app-dest-name">{d.nom}</span>

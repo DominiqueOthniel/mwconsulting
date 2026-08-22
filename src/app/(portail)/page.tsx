@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app/AppShell";
 import { NotificationsList } from "@/components/app/NotificationsList";
+import { SoftCover } from "@/components/app/SoftCover";
+import { HERO_IMAGE } from "@/lib/images";
 import { DESTINATIONS, ETAPES_AGENCE } from "@/lib/portail";
 
 function salutation() {
@@ -17,15 +19,20 @@ export default function HomeAppPage() {
     <AppShell title="Le TGV de l Immigration">
       <section className="app-hero">
         <div className="app-hero-panel">
-          <p className="app-kicker">{salutation()}</p>
-          <h1 className="app-h1">MW Consulting</h1>
-          <p className="app-lead app-lead-on-dark">
-            Un pays, une procedure, un accompagnement clair jusqu au rendez-vous.
-          </p>
-          <div className="app-actions">
-            <Link href="/destinations" className="app-btn app-btn-gold">
-              Choisir une destination
-            </Link>
+          <SoftCover src={HERO_IMAGE} priority className="app-media-hero" />
+          <div className="app-hero-veil" aria-hidden />
+          <div className="app-hero-content">
+            <p className="app-kicker">{salutation()}</p>
+            <h1 className="app-h1">MW Consulting</h1>
+            <p className="app-lead app-lead-on-dark">
+              Un pays, une procedure, un accompagnement clair jusqu au
+              rendez-vous.
+            </p>
+            <div className="app-actions">
+              <Link href="/destinations" className="app-btn app-btn-gold">
+                Choisir une destination
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -47,11 +54,19 @@ export default function HomeAppPage() {
               className="app-chip-card"
               role="listitem"
             >
-              <span className="app-chip-flag" aria-hidden>
-                {d.drapeau}
+              <span className="app-chip-media" aria-hidden>
+                <SoftCover
+                  src={d.image}
+                  sizes="160px"
+                  className="app-media-chip"
+                />
+                <span className="app-chip-veil" />
               </span>
+              <span className="app-chip-flag">{d.drapeau}</span>
               <span className="app-chip-name">{d.nom}</span>
-              <span className="app-chip-meta">{d.procedures.length} procedures</span>
+              <span className="app-chip-meta">
+                {d.procedures.length} procedures
+              </span>
             </Link>
           ))}
         </div>

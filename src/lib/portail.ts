@@ -1,4 +1,5 @@
 import { PAYS } from "@/lib/pays";
+import { DEST_IMAGES, FALLBACK_IMAGE } from "@/lib/images";
 
 export type ProcedurePortail = {
   nom: string;
@@ -11,6 +12,7 @@ export type DestinationPortail = {
   slug: string;
   nom: string;
   drapeau: string;
+  image: string;
   accroche: string;
   ambiance: string;
   pourQui: string;
@@ -188,6 +190,7 @@ export const DESTINATIONS: DestinationPortail[] = PAYS.map((pays) => {
     slug: slugify(pays.nom),
     nom: pays.nom,
     drapeau: DRAPEAUX[pays.nom] ?? "🌍",
+    image: DEST_IMAGES[pays.nom] ?? FALLBACK_IMAGE,
     ...meta,
     procedures: pays.programmes.map((nom) => ({
       nom,

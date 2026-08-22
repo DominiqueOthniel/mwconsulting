@@ -52,16 +52,6 @@ export default function AidePage() {
           ))}
         </ul>
       </section>
-
-      <section className="app-block app-block-soft">
-        <h2 className="app-h2">Espace agence</h2>
-        <p className="app-lead">
-          Vous etes conseiller MW ? Accedez a Relais pour suivre les dossiers.
-        </p>
-        <Link href="/login" className="app-text-link">
-          Connexion Relais
-        </Link>
-      </section>
     </AppShell>
   );
 }
