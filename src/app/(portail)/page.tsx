@@ -14,46 +14,19 @@ export default function HomeAppPage() {
   const featured = DESTINATIONS.slice(0, 6);
 
   return (
-    <AppShell title="Votre compagnon immigration">
-      <section className="app-welcome">
-        <p className="app-kicker">{salutation()}</p>
-        <h1 className="app-h1">MW Consulting</h1>
-        <p className="app-lead">
-          Choisissez un pays, comprenez la procedure, preparez vos rendez-vous.
-          Simple, clair, avec vous a chaque etape.
-        </p>
-        <div className="app-actions">
-          <Link href="/destinations" className="app-btn app-btn-primary">
-            Choisir une destination
-          </Link>
-          <Link href="/aide" className="app-btn app-btn-secondary">
-            Contacter l agence
-          </Link>
-        </div>
-      </section>
-
-      <section className="app-block" aria-labelledby="titre-rapide">
-        <div className="app-block-head">
-          <h2 id="titre-rapide" className="app-h2">
-            Acces rapide
-          </h2>
-        </div>
-        <div className="app-quick">
-          <Link href="/destinations" className="app-quick-item">
-            <span aria-hidden>🌍</span>
-            <strong>Pays</strong>
-            <em>{DESTINATIONS.length} destinations</em>
-          </Link>
-          <Link href="/notifications" className="app-quick-item">
-            <span aria-hidden>🔔</span>
-            <strong>Alertes</strong>
-            <em>Conseils et rappels</em>
-          </Link>
-          <Link href="/aide" className="app-quick-item">
-            <span aria-hidden>💬</span>
-            <strong>Aide</strong>
-            <em>Douala · Yaounde</em>
-          </Link>
+    <AppShell title="Le TGV de l Immigration">
+      <section className="app-hero">
+        <div className="app-hero-panel">
+          <p className="app-kicker">{salutation()}</p>
+          <h1 className="app-h1">MW Consulting</h1>
+          <p className="app-lead app-lead-on-dark">
+            Un pays, une procedure, un accompagnement clair jusqu au rendez-vous.
+          </p>
+          <div className="app-actions">
+            <Link href="/destinations" className="app-btn app-btn-gold">
+              Choisir une destination
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -87,10 +60,10 @@ export default function HomeAppPage() {
       <section className="app-block" aria-labelledby="titre-alertes">
         <div className="app-block-head">
           <h2 id="titre-alertes" className="app-h2">
-            Vos alertes
+            Alertes
           </h2>
           <Link href="/notifications" className="app-text-link">
-            Ouvrir
+            Voir tout
           </Link>
         </div>
         <NotificationsList limit={2} />
@@ -99,7 +72,7 @@ export default function HomeAppPage() {
       <section className="app-block" aria-labelledby="titre-parcours">
         <div className="app-block-head">
           <h2 id="titre-parcours" className="app-h2">
-            Comment ca marche
+            En 4 etapes
           </h2>
         </div>
         <ol className="app-steps">

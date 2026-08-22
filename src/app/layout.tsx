@@ -12,6 +12,7 @@ const serif = Fraunces({
   subsets: ["latin"],
   variable: "--font-serif",
   display: "swap",
+  axes: ["SOFT", "WONK", "opsz"],
 });
 
 export const metadata: Metadata = {
