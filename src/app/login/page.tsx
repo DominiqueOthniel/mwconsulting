@@ -1,7 +1,18 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/LoginForm";
 import { BrandLogo } from "@/components/BrandLogo";
+import { getSession, isClientRole, isStaffRole } from "@/lib/auth";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await getSession();
+  if (session && isStaffRole(session.role)) {
+    redirect("/relais");
+  }
+  if (session && isClientRole(session.role)) {
+    redirect("/profil");
+  }
+
   return (
     <div className="login-split">
       <section className="login-panel">
@@ -11,9 +22,9 @@ export default function LoginPage() {
             Relais, le bureau des dossiers MW Consulting.
           </h1>
           <p className="mt-4 max-w-md text-sm text-paper/75">
-            Le TGV de l'Immigration. Dossiers vers plusieurs pays,
+            Le TGV de l Immigration. Dossiers vers plusieurs pays,
             convocations, composition familiale, biometrie, medicaux et
-            preuves d'emploi.
+            preuves d emploi.
           </p>
         </div>
         <p className="text-xs text-paper/50">Douala · Yaounde</p>
@@ -26,9 +37,15 @@ export default function LoginPage() {
           <h2 className="mb-6 font-serif text-2xl text-ink">Connexion conseiller</h2>
           <LoginForm />
           <p className="mt-6 text-center text-sm text-sage">
-            <a href="/" className="link">
+            Client ?{" "}
+            <Link href="/compte" className="link">
+              Acceder a mon profil
+            </Link>
+          </p>
+          <p className="mt-3 text-center text-sm text-sage">
+            <Link href="/" className="link">
               Retour au portail public
-            </a>
+            </Link>
           </p>
         </div>
       </section>

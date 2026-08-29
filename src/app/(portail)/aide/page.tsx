@@ -7,8 +7,12 @@ const faqs = [
     a: "Ouvrez Destinations, choisissez un pays, puis une procedure. Cliquez sur Demarrer mon dossier et envoyez vos infos dans l app.",
   },
   {
+    q: "Ou suivre ma demande ?",
+    a: "Ouvrez Profil (onglet en bas). Vous y voyez vos demandes, le statut de procedure, vos infos et votre mot de passe.",
+  },
+  {
     q: "Que se passe-t-il apres l envoi ?",
-    a: "Votre demande arrive dans Relais chez MW Consulting. Un conseiller prend en charge et vous recontacte.",
+    a: "Votre demande arrive dans Relais chez MW Consulting. Un conseiller prend en charge et vous recontacte. Le statut se met a jour dans votre profil.",
   },
   {
     q: "Combien de temps ca prend ?",
@@ -33,7 +37,13 @@ export default function AidePage() {
 
       <section className="app-block">
         <div className="app-actions app-actions-stack">
-          <Link href="/destinations" className="app-btn app-btn-primary">
+          <Link href="/rendez-vous" className="app-btn app-btn-primary">
+            Prendre un rendez-vous
+          </Link>
+          <Link href="/boussole" className="app-btn app-btn-secondary">
+            Evaluer mon projet
+          </Link>
+          <Link href="/destinations" className="app-btn app-btn-ghost">
             Choisir une destination
           </Link>
         </div>

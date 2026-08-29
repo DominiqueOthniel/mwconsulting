@@ -12,10 +12,12 @@ model User {
   id           String     @id @default(cuid())
   nom          String
   email        String     @unique
+  telephone    String?
   passwordHash String
   role         String
   createdAt    DateTime   @default(now())
-  dossiers     Dossier[]
+  dossiers     Dossier[]  @relation("ConseillerDossiers")
+  demandes     Dossier[]  @relation("ClientDossiers")
   audits       AuditLog[]
 }
 
@@ -33,7 +35,9 @@ model Dossier {
   source           String      @default("RELAIS")
   notes            String      @default("")
   conseillerId     String
-  conseiller       User        @relation(fields: [conseillerId], references: [id])
+  conseiller       User        @relation("ConseillerDossiers", fields: [conseillerId], references: [id])
+  clientId         String?
+  client           User?       @relation("ClientDossiers", fields: [clientId], references: [id])
   personnes        Personne[]
   evenements       Evenement[]
   emplois          Emploi[]

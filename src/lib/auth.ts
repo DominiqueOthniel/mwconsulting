@@ -1,5 +1,6 @@
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { authSecret } from "@/lib/secret";
 
 export type SessionUser = {
@@ -8,6 +9,14 @@ export type SessionUser = {
   email: string;
   role: string;
 };
+
+export function isStaffRole(role: string) {
+  return role === "ADMIN" || role === "CONSEILLER";
+}
+
+export function isClientRole(role: string) {
+  return role === "CLIENT";
+}
 
 function secretKey() {
   return new TextEncoder().encode(authSecret());
@@ -62,6 +71,22 @@ export async function requireSession(): Promise<SessionUser> {
   const session = await getSession();
   if (!session) {
     throw new Error("NON_AUTHENTIFIE");
+  }
+  return session;
+}
+
+export async function requireStaffSession(): Promise<SessionUser> {
+  const session = await getSession();
+  if (!session || !isStaffRole(session.role)) {
+    redirect("/login");
+  }
+  return session;
+}
+
+export async function requireClientSession(): Promise<SessionUser> {
+  const session = await getSession();
+  if (!session || !isClientRole(session.role)) {
+    redirect("/compte");
   }
   return session;
 }

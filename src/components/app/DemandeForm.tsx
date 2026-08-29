@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import {
   soumettreDemandePortailAction,
@@ -8,17 +9,27 @@ import {
 
 const initial: ActionState = {};
 
+export type DemandeClientPrefill = {
+  prenom: string;
+  nom: string;
+  email: string;
+  telephone: string;
+};
+
 export function DemandeForm({
   paysDestination,
   programme,
+  client,
 }: {
   paysDestination: string;
   programme: string;
+  client?: DemandeClientPrefill | null;
 }) {
   const [state, action, pending] = useActionState(
     soumettreDemandePortailAction,
     initial,
   );
+  const connecte = Boolean(client);
 
   return (
     <form action={action} className="app-demande-form">
@@ -32,18 +43,51 @@ export function DemandeForm({
         </p>
       </div>
 
+      {connecte ? (
+        <p className="app-demande-account">
+          Connecte en tant que <strong>{client!.email}</strong>. La demande sera
+          visible dans{" "}
+          <Link href="/profil" className="app-text-link">
+            Mon profil
+          </Link>
+          .
+        </p>
+      ) : (
+        <p className="app-demande-account">
+          Deja un compte ?{" "}
+          <Link href="/compte" className="app-text-link">
+            Connectez-vous
+          </Link>{" "}
+          pour retrouver vos demandes.
+        </p>
+      )}
+
       <div className="app-demande-grid">
         <div>
           <label className="lbl" htmlFor="prenom">
             Prenom
           </label>
-          <input className="field" id="prenom" name="prenom" required autoComplete="given-name" />
+          <input
+            className="field"
+            id="prenom"
+            name="prenom"
+            required
+            defaultValue={client?.prenom ?? ""}
+            autoComplete="given-name"
+          />
         </div>
         <div>
           <label className="lbl" htmlFor="nom">
             Nom
           </label>
-          <input className="field" id="nom" name="nom" required autoComplete="family-name" />
+          <input
+            className="field"
+            id="nom"
+            name="nom"
+            required
+            defaultValue={client?.nom ?? ""}
+            autoComplete="family-name"
+          />
         </div>
       </div>
 
@@ -54,20 +98,22 @@ export function DemandeForm({
         <input className="field" id="dateNaissance" name="dateNaissance" type="date" />
       </div>
 
-      <div>
-        <label className="lbl" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="field"
-          id="email"
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          inputMode="email"
-        />
-      </div>
+      {!connecte ? (
+        <div>
+          <label className="lbl" htmlFor="email">
+            Email
+          </label>
+          <input
+            className="field"
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            inputMode="email"
+          />
+        </div>
+      ) : null}
 
       <div>
         <label className="lbl" htmlFor="telephone">
@@ -79,6 +125,7 @@ export function DemandeForm({
           name="telephone"
           type="tel"
           required
+          defaultValue={client?.telephone ?? ""}
           autoComplete="tel"
           inputMode="tel"
           placeholder="Ex: +237 6XX XXX XXX"
@@ -109,6 +156,43 @@ export function DemandeForm({
           placeholder="Situation familiale, delai souhaite, questions..."
         />
       </div>
+
+      {!connecte ? (
+        <div className="app-demande-securite">
+          <p className="app-demande-securite-title">Creer mon espace client</p>
+          <p className="app-muted">
+            Un compte vous permet de suivre le statut de vos procedures.
+          </p>
+          <div>
+            <label className="lbl" htmlFor="password">
+              Mot de passe
+            </label>
+            <input
+              className="field"
+              id="password"
+              name="password"
+              type="password"
+              required
+              minLength={8}
+              autoComplete="new-password"
+            />
+          </div>
+          <div>
+            <label className="lbl" htmlFor="passwordConfirm">
+              Confirmer le mot de passe
+            </label>
+            <input
+              className="field"
+              id="passwordConfirm"
+              name="passwordConfirm"
+              type="password"
+              required
+              minLength={8}
+              autoComplete="new-password"
+            />
+          </div>
+        </div>
+      ) : null}
 
       {state.error ? <p className="app-form-error">{state.error}</p> : null}
 

@@ -160,10 +160,10 @@ export function repondreChat(message: string): ChatReply {
     ])
   ) {
     return {
-      text: "Pour demarrer, choisissez un pays puis une procedure, et cliquez sur « Demarrer mon dossier ». Vous remplissez vos infos dans l app: MW Consulting recoit la demande dans Relais.",
+      text: "Pour demarrer, choisissez un pays puis une procedure, et cliquez sur « Demarrer mon dossier ». Un compte client est cree pour suivre vos demandes dans Profil.",
       links: [
         { label: "Choisir une destination", href: "/destinations" },
-        { label: "Aide", href: "/aide" },
+        { label: "Mon profil", href: "/profil" },
       ],
       suggestions: ["Visa etudes Canada", "Quels pays proposez-vous ?"],
     };

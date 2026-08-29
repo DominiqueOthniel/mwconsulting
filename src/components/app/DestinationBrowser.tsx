@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { SoftCover } from "@/components/app/SoftCover";
 import type { DestinationPortail } from "@/lib/portail";
 
 export function DestinationBrowser({
@@ -19,6 +19,7 @@ export function DestinationBrowser({
       (d) =>
         d.nom.toLowerCase().includes(needle) ||
         d.accroche.toLowerCase().includes(needle) ||
+        d.ambiance.toLowerCase().includes(needle) ||
         d.procedures.some((p) => p.nom.toLowerCase().includes(needle)),
     );
   }, [destinations, q]);
@@ -53,37 +54,28 @@ export function DestinationBrowser({
           </button>
         </div>
       ) : (
-        <ul className="app-dest-list" role="list">
+        <div className="app-postcard-grid">
           {filtered.map((d) => (
-            <li key={d.slug}>
-              <Link href={`/pays/${d.slug}`} className="app-dest-row">
-                <span className="app-dest-thumb">
-                  <Image
-                    src={d.image}
-                    alt=""
-                    width={56}
-                    height={56}
-                    className="app-dest-thumb-img"
-                  />
-                  <span className="app-dest-thumb-flag" aria-hidden>
-                    {d.drapeau}
-                  </span>
+            <Link key={d.slug} href={`/pays/${d.slug}`} className="app-postcard">
+              <span className="app-postcard-media">
+                <SoftCover
+                  src={d.image}
+                  sizes="(max-width: 720px) 90vw, 320px"
+                  className="app-media-postcard"
+                />
+                <span className="app-postcard-veil" />
+                <span className="app-postcard-flag">{d.drapeau}</span>
+              </span>
+              <span className="app-postcard-body">
+                <span className="app-postcard-name">{d.nom}</span>
+                <span className="app-postcard-hook">{d.accroche}</span>
+                <span className="app-postcard-meta">
+                  {d.procedures.length} procedures
                 </span>
-                <span className="app-dest-copy">
-                  <span className="app-dest-name">{d.nom}</span>
-                  <span className="app-dest-hook">{d.accroche}</span>
-                </span>
-                <span className="app-dest-count">
-                  {d.procedures.length}
-                  <span className="sr-only"> procedures</span>
-                </span>
-                <span className="app-chevron" aria-hidden>
-                  ›
-                </span>
-              </Link>
-            </li>
+              </span>
+            </Link>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

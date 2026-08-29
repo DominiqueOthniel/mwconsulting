@@ -24,15 +24,14 @@ export default async function MerciPage({
           </p>
         ) : null}
         <p className="app-muted">
-          Conservez cette reference. Elle servira lors des echanges avec
-          l agence.
+          Suivez le statut de votre procedure dans votre profil.
         </p>
         <div className="app-actions app-actions-stack" style={{ marginTop: 24 }}>
-          <Link href="/destinations" className="app-btn app-btn-primary">
-            Voir d autres destinations
+          <Link href="/profil" className="app-btn app-btn-primary">
+            Voir mon profil
           </Link>
-          <Link href="/" className="app-btn app-btn-secondary">
-            Retour a l accueil
+          <Link href="/destinations" className="app-btn app-btn-secondary">
+            Voir d autres destinations
           </Link>
         </div>
       </section>

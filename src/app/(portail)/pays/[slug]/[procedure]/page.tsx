@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app/AppShell";
+import { SoftCover } from "@/components/app/SoftCover";
 import {
   DESTINATIONS,
   destinationParSlug,
@@ -30,13 +31,17 @@ export default async function ProcedureAppPage({
 
   return (
     <AppShell title={procedure.nom} backHref={`/pays/${destination.slug}`}>
-      <section className="app-country">
-        <Link href={`/pays/${destination.slug}`} className="app-text-link">
-          {destination.drapeau} {destination.nom}
-        </Link>
-        <h1 className="app-h1">{procedure.nom}</h1>
-        <p className="app-lead">{procedure.resume}</p>
-        <p className="app-pill app-pill-info">{procedure.delai}</p>
+      <section className="app-country-banner">
+        <SoftCover src={destination.image} className="app-media-banner" />
+        <div className="app-country-veil" aria-hidden />
+        <div className="app-country-banner-content">
+          <Link href={`/pays/${destination.slug}`} className="app-text-link app-link-on-dark">
+            {destination.drapeau} {destination.nom}
+          </Link>
+          <h1 className="app-h1 app-h1-on-dark">{procedure.nom}</h1>
+          <p className="app-lead app-lead-on-dark">{procedure.resume}</p>
+          <p className="app-pill app-pill-info">{procedure.delai}</p>
+        </div>
       </section>
 
       <section className="app-block" aria-labelledby="etapes">
@@ -66,9 +71,12 @@ export default async function ProcedureAppPage({
           >
             Demarrer mon dossier
           </Link>
+          <Link href="/rendez-vous" className="app-btn app-btn-secondary">
+            Prendre un rendez-vous
+          </Link>
           <Link
             href={`/pays/${destination.slug}`}
-            className="app-btn app-btn-secondary"
+            className="app-btn app-btn-ghost"
           >
             Autres procedures
           </Link>

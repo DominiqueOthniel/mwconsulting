@@ -11,7 +11,7 @@ const tabs = [
   { href: "/", label: "Accueil", icon: IconHome },
   { href: "/destinations", label: "Pays", icon: IconGlobe },
   { href: "/notifications", label: "Alertes", icon: IconBell },
-  { href: "/aide", label: "Aide", icon: IconHelp },
+  { href: "/profil", label: "Profil", icon: IconUser },
 ] as const;
 
 function IconHome({ active }: { active: boolean }) {
@@ -66,25 +66,24 @@ function IconBell({ active }: { active: boolean }) {
   );
 }
 
-function IconHelp({ active }: { active: boolean }) {
+function IconUser({ active }: { active: boolean }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
       <circle
         cx="12"
-        cy="12"
-        r="8"
+        cy="9"
+        r="3.5"
         stroke="currentColor"
         strokeWidth="1.8"
         fill={active ? "currentColor" : "none"}
-        fillOpacity={active ? 0.12 : 0}
+        fillOpacity={active ? 0.15 : 0}
       />
       <path
-        d="M9.5 9.5a2.5 2.5 0 1 1 3.8 2.1c-.8.5-1.3 1-1.3 2"
+        d="M5.5 19.5c1.6-3 4-4.5 6.5-4.5s4.9 1.5 6.5 4.5"
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
       />
-      <circle cx="12" cy="16.5" r="1" fill="currentColor" />
     </svg>
   );
 }
@@ -146,18 +145,33 @@ export function AppShell({
             <p className="app-top-sub">{title ?? "Le TGV de l Immigration"}</p>
           </div>
         </div>
-        <Link
-          href="/notifications"
-          className="app-bell"
-          aria-label={
-            unread > 0
-              ? `${unread} notifications non lues`
-              : "Notifications"
-          }
-        >
-          <IconBell active={pathname.startsWith("/notifications")} />
-          {unread > 0 ? <span className="app-badge">{unread > 9 ? "9+" : unread}</span> : null}
-        </Link>
+        <div className="app-top-actions">
+          <Link
+            href="/notifications"
+            className="app-bell"
+            aria-label={
+              unread > 0
+                ? `${unread} notifications non lues`
+                : "Notifications"
+            }
+          >
+            <IconBell active={pathname.startsWith("/notifications")} />
+            {unread > 0 ? (
+              <span className="app-badge">{unread > 9 ? "9+" : unread}</span>
+            ) : null}
+          </Link>
+          <Link
+            href="/profil"
+            className="app-top-profil"
+            aria-label="Mon profil"
+          >
+            <IconUser
+              active={
+                pathname.startsWith("/profil") || pathname.startsWith("/compte")
+              }
+            />
+          </Link>
+        </div>
       </header>
 
       <main id="contenu" className="app-main">
@@ -172,7 +186,10 @@ export function AppShell({
               : tab.href === "/destinations"
                 ? pathname.startsWith("/destinations") ||
                   pathname.startsWith("/pays")
-                : pathname === tab.href || pathname.startsWith(`${tab.href}/`);
+                : tab.href === "/profil"
+                  ? pathname.startsWith("/profil") ||
+                    pathname.startsWith("/compte")
+                  : pathname === tab.href || pathname.startsWith(`${tab.href}/`);
           const Icon = tab.icon;
           const showBadge = tab.href === "/notifications" && unread > 0;
           return (

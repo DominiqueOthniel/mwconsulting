@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app/AppShell";
 import { DemandeForm } from "@/components/app/DemandeForm";
+import { getSession, isClientRole } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import {
   DESTINATIONS,
   destinationParSlug,
@@ -29,6 +31,23 @@ export default async function DemandePage({
   const procedure = procedureParSlug(destination, procedureSlug);
   if (!procedure) notFound();
 
+  const session = await getSession();
+  let client = null;
+  if (session && isClientRole(session.role)) {
+    const user = await prisma.user.findUnique({ where: { id: session.id } });
+    if (user) {
+      const parts = user.nom.trim().split(/\s+/);
+      const prenom = parts[0] ?? "";
+      const nom = parts.slice(1).join(" ") || parts[0] || "";
+      client = {
+        prenom,
+        nom,
+        email: user.email,
+        telephone: user.telephone ?? "",
+      };
+    }
+  }
+
   return (
     <AppShell
       title="Demarrer mon dossier"
@@ -45,6 +64,7 @@ export default async function DemandePage({
       <DemandeForm
         paysDestination={destination.nom}
         programme={procedure.nom}
+        client={client}
       />
 
       <p className="app-muted app-center" style={{ marginTop: 16 }}>

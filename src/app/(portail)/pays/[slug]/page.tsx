@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app/AppShell";
 import { SoftCover } from "@/components/app/SoftCover";
+import { TemoignagesList } from "@/components/app/TemoignagesList";
 import { DESTINATIONS, destinationParSlug, slugify } from "@/lib/portail";
+import { temoignagesPourPays } from "@/lib/temoignages";
 
 export function generateStaticParams() {
   return DESTINATIONS.map((d) => ({ slug: d.slug }));
@@ -16,6 +18,7 @@ export default async function PaysAppPage({
   const { slug } = await params;
   const destination = destinationParSlug(slug);
   if (!destination) notFound();
+  const temoins = temoignagesPourPays(destination.nom);
 
   return (
     <AppShell title={destination.nom} backHref="/destinations">
@@ -32,6 +35,22 @@ export default async function PaysAppPage({
       </section>
 
       <p className="app-muted app-country-for">{destination.pourQui}</p>
+      <p className="app-country-ambiance">{destination.ambiance}</p>
+
+      <div className="app-gallery" role="list">
+        {destination.gallery.map((src, i) => (
+          <span key={src} className="app-gallery-item" role="listitem">
+            <SoftCover
+              src={src}
+              sizes="200px"
+              className="app-media-gallery"
+            />
+            {i === 0 ? (
+              <span className="sr-only">Vues de {destination.nom}</span>
+            ) : null}
+          </span>
+        ))}
+      </div>
 
       <section className="app-block" aria-labelledby="procs">
         <div className="app-block-head">
@@ -60,6 +79,13 @@ export default async function PaysAppPage({
         </ul>
       </section>
 
+      <section className="app-block" aria-labelledby="temoins-pays">
+        <h2 id="temoins-pays" className="app-h2">
+          Ils sont partis vers {destination.nom}
+        </h2>
+        <TemoignagesList items={temoins} />
+      </section>
+
       <section className="app-block">
         <div className="app-actions app-actions-stack">
           <Link
@@ -68,8 +94,11 @@ export default async function PaysAppPage({
           >
             Demarrer mon dossier
           </Link>
-          <Link href="/destinations" className="app-btn app-btn-secondary">
-            Autre pays
+          <Link href="/rendez-vous" className="app-btn app-btn-secondary">
+            Prendre un rendez-vous
+          </Link>
+          <Link href="/boussole" className="app-btn app-btn-ghost">
+            Evaluer mon projet
           </Link>
         </div>
       </section>

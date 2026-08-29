@@ -1,5 +1,5 @@
 import { PAYS } from "@/lib/pays";
-import { DEST_IMAGES, FALLBACK_IMAGE } from "@/lib/images";
+import { DEST_GALLERY, DEST_IMAGES, FALLBACK_IMAGE } from "@/lib/images";
 
 export type ProcedurePortail = {
   nom: string;
@@ -13,6 +13,7 @@ export type DestinationPortail = {
   nom: string;
   drapeau: string;
   image: string;
+  gallery: string[];
   accroche: string;
   ambiance: string;
   pourQui: string;
@@ -191,6 +192,7 @@ export const DESTINATIONS: DestinationPortail[] = PAYS.map((pays) => {
     nom: pays.nom,
     drapeau: DRAPEAUX[pays.nom] ?? "🌍",
     image: DEST_IMAGES[pays.nom] ?? FALLBACK_IMAGE,
+    gallery: DEST_GALLERY[pays.nom] ?? [DEST_IMAGES[pays.nom] ?? FALLBACK_IMAGE],
     ...meta,
     procedures: pays.programmes.map((nom) => ({
       nom,

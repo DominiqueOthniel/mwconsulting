@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
+import { getSession, isClientRole, isStaffRole } from "@/lib/auth";
 import { Sidebar } from "@/components/Sidebar";
 
 export default async function ConsoleLayout({
@@ -9,6 +9,12 @@ export default async function ConsoleLayout({
 }) {
   const session = await getSession();
   if (!session) {
+    redirect("/login");
+  }
+  if (isClientRole(session.role)) {
+    redirect("/profil");
+  }
+  if (!isStaffRole(session.role)) {
     redirect("/login");
   }
 

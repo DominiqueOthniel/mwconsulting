@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
-import { createSession, destroySession, requireSession } from "@/lib/auth";
+import { createSession, destroySession, getSession, isClientRole, isStaffRole, requireClientSession, requireStaffSession } from "@/lib/auth";
 import { ecrireAudit } from "@/lib/audit";
 import { normaliserPays } from "@/lib/pays";
 
@@ -25,7 +25,7 @@ export async function loginAction(
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
+    if (!user || !isStaffRole(user.role)) {
       return { error: "Identifiants incorrects." };
     }
 
@@ -56,8 +56,323 @@ export async function loginAction(
 }
 
 export async function logoutAction() {
+  const session = await getSession();
   await destroySession();
+  if (session && isClientRole(session.role)) {
+    redirect("/");
+  }
   redirect("/login");
+}
+
+export async function inscriptionClientAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const prenom = String(formData.get("prenom") ?? "").trim();
+  const nom = String(formData.get("nom") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const telephone = String(formData.get("telephone") ?? "").trim();
+  const password = String(formData.get("password") ?? "");
+  const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
+
+  if (!prenom || !nom || !email || !telephone || !password) {
+    return { error: "Tous les champs sont requis." };
+  }
+  if (!email.includes("@")) {
+    return { error: "Adresse email invalide." };
+  }
+  if (password.length < 8) {
+    return { error: "Le mot de passe doit contenir au moins 8 caracteres." };
+  }
+  if (password !== passwordConfirm) {
+    return { error: "Les mots de passe ne correspondent pas." };
+  }
+
+  try {
+    const existant = await prisma.user.findUnique({ where: { email } });
+    if (existant) {
+      return { error: "Un compte existe deja avec cet email. Connectez-vous." };
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: {
+        nom: `${prenom} ${nom}`,
+        email,
+        telephone,
+        passwordHash,
+        role: "CLIENT",
+      },
+    });
+
+    await rattacherDemandesParEmail(user.id, email);
+
+    await createSession({
+      id: user.id,
+      nom: user.nom,
+      email: user.email,
+      role: user.role,
+    });
+  } catch (error) {
+    const digest =
+      error && typeof error === "object" && "digest" in error
+        ? String((error as { digest: string }).digest)
+        : "";
+    if (digest.includes("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("inscriptionClientAction", error);
+    return { error: "Inscription indisponible pour le moment." };
+  }
+
+  redirect("/profil");
+}
+
+export async function connexionClientAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const email = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase();
+  const password = String(formData.get("password") ?? "");
+
+  if (!email || !password) {
+    return { error: "Email et mot de passe requis." };
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user || !isClientRole(user.role)) {
+      return { error: "Identifiants incorrects." };
+    }
+
+    const ok = await bcrypt.compare(password, user.passwordHash);
+    if (!ok) {
+      return { error: "Identifiants incorrects." };
+    }
+
+    await rattacherDemandesParEmail(user.id, email);
+
+    await createSession({
+      id: user.id,
+      nom: user.nom,
+      email: user.email,
+      role: user.role,
+    });
+  } catch (error) {
+    const digest =
+      error && typeof error === "object" && "digest" in error
+        ? String((error as { digest: string }).digest)
+        : "";
+    if (digest.includes("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("connexionClientAction", error);
+    return { error: "Connexion indisponible pour le moment." };
+  }
+
+  redirect("/profil");
+}
+
+export async function majProfilClientAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const session = await requireClientSession();
+  const nom = String(formData.get("nom") ?? "").trim();
+  const telephone = String(formData.get("telephone") ?? "").trim();
+
+  if (!nom || !telephone) {
+    return { error: "Nom et telephone sont requis." };
+  }
+
+  try {
+    const user = await prisma.user.update({
+      where: { id: session.id },
+      data: { nom, telephone },
+    });
+
+    await createSession({
+      id: user.id,
+      nom: user.nom,
+      email: user.email,
+      role: user.role,
+    });
+
+    await ecrireAudit(
+      session,
+      "MISE_A_JOUR",
+      "User",
+      user.id,
+      "Profil client mis a jour",
+    );
+  } catch (error) {
+    console.error("majProfilClientAction", error);
+    return { error: "Mise a jour impossible pour le moment." };
+  }
+
+  revalidatePath("/profil");
+  return { ok: true };
+}
+
+export async function changerMotDePasseClientAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const session = await requireClientSession();
+  const actuel = String(formData.get("passwordActuel") ?? "");
+  const nouveau = String(formData.get("passwordNouveau") ?? "");
+  const confirm = String(formData.get("passwordConfirm") ?? "");
+
+  if (!actuel || !nouveau || !confirm) {
+    return { error: "Tous les champs mot de passe sont requis." };
+  }
+  if (nouveau.length < 8) {
+    return { error: "Le nouveau mot de passe doit contenir au moins 8 caracteres." };
+  }
+  if (nouveau !== confirm) {
+    return { error: "Les nouveaux mots de passe ne correspondent pas." };
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: session.id } });
+    if (!user) {
+      return { error: "Compte introuvable." };
+    }
+
+    const ok = await bcrypt.compare(actuel, user.passwordHash);
+    if (!ok) {
+      return { error: "Mot de passe actuel incorrect." };
+    }
+
+    const passwordHash = await bcrypt.hash(nouveau, 10);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { passwordHash },
+    });
+
+    await ecrireAudit(
+      session,
+      "MISE_A_JOUR",
+      "User",
+      user.id,
+      "Mot de passe client change",
+    );
+  } catch (error) {
+    console.error("changerMotDePasseClientAction", error);
+    return { error: "Changement impossible pour le moment." };
+  }
+
+  return { ok: true };
+}
+
+export async function prendreRendezVousAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const session = await getSession();
+  const clientSession =
+    session && isClientRole(session.role) ? session : null;
+
+  const prenom = String(formData.get("prenom") ?? "").trim();
+  const nom = String(formData.get("nom") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const telephone = String(formData.get("telephone") ?? "").trim();
+  const bureau = String(formData.get("bureau") ?? "").trim();
+  const creneau = String(formData.get("creneau") ?? "").trim();
+  const message = String(formData.get("message") ?? "").trim();
+  const paysDestination = normaliserPays(
+    String(formData.get("paysDestination") ?? "").trim(),
+  );
+
+  if (!prenom || !nom || !email || !telephone || !bureau) {
+    return { error: "Prenom, nom, email, telephone et bureau sont requis." };
+  }
+  if (!email.includes("@")) {
+    return { error: "Adresse email invalide." };
+  }
+
+  try {
+    let clientId = clientSession?.id ?? null;
+    if (clientId) {
+      await rattacherDemandesParEmail(clientId, email);
+    } else {
+      const existant = await prisma.user.findUnique({ where: { email } });
+      if (existant && isClientRole(existant.role)) {
+        clientId = existant.id;
+      }
+    }
+
+    const referenceInterne = await prochaineReference();
+    const conseillerId = await conseillerAccueilId();
+    const notes = [
+      "Demande de rendez-vous agence via le portail.",
+      `Bureau: ${bureau}`,
+      creneau ? `Creneau souhaite: ${creneau}` : "",
+      message ? `Projet: ${message}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const dossier = await prisma.dossier.create({
+      data: {
+        referenceInterne,
+        programme: "Entretien conseil agence",
+        paysDestination: paysDestination || "Canada",
+        email,
+        telephone,
+        source: "PORTAIL",
+        statut: "SOUMIS",
+        notes,
+        conseillerId,
+        clientId,
+        personnes: {
+          create: {
+            roleFamilial: "PRINCIPAL",
+            prenom,
+            nom,
+            accompagne: true,
+            doitAssisterEntretien: true,
+          },
+        },
+      },
+    });
+
+    await ecrireAudit(
+      clientSession,
+      "CREATION",
+      "Dossier",
+      dossier.id,
+      `Rendez-vous ${referenceInterne}: ${prenom} ${nom} · ${bureau}`,
+    );
+
+    revalidatePath("/relais");
+    revalidatePath("/demandes");
+    revalidatePath("/profil");
+    redirect(`/demande/merci?ref=${encodeURIComponent(referenceInterne)}`);
+  } catch (error) {
+    const digest =
+      error && typeof error === "object" && "digest" in error
+        ? String((error as { digest: string }).digest)
+        : "";
+    if (digest.includes("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("prendreRendezVousAction", error);
+    return { error: "Envoi impossible pour le moment. Reessayez." };
+  }
+}
+
+async function rattacherDemandesParEmail(clientId: string, email: string) {
+  await prisma.dossier.updateMany({
+    where: {
+      email,
+      source: "PORTAIL",
+      OR: [{ clientId: null }, { clientId }],
+    },
+    data: { clientId },
+  });
 }
 
 async function prochaineReference() {
@@ -75,7 +390,7 @@ export async function creerDossierAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const session = await requireSession();
+  const session = await requireStaffSession();
 
   const prenom = String(formData.get("prenom") ?? "").trim();
   const nom = String(formData.get("nom") ?? "").trim();
@@ -140,7 +455,10 @@ async function conseillerAccueilId() {
     orderBy: { createdAt: "asc" },
   });
   if (admin) return admin.id;
-  const any = await prisma.user.findFirst({ orderBy: { createdAt: "asc" } });
+  const any = await prisma.user.findFirst({
+    where: { role: { in: ["ADMIN", "CONSEILLER"] } },
+    orderBy: { createdAt: "asc" },
+  });
   if (!any) throw new Error("Aucun conseiller disponible");
   return any.id;
 }
@@ -149,9 +467,12 @@ export async function soumettreDemandePortailAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const session = await getSession();
+  const clientSession =
+    session && isClientRole(session.role) ? session : null;
+
   const prenom = String(formData.get("prenom") ?? "").trim();
   const nom = String(formData.get("nom") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const telephone = String(formData.get("telephone") ?? "").trim();
   const dateNaissance = String(formData.get("dateNaissance") ?? "").trim();
   const paysResidence = String(formData.get("paysResidence") ?? "Cameroun").trim();
@@ -160,6 +481,19 @@ export async function soumettreDemandePortailAction(
   const paysDestination = normaliserPays(
     String(formData.get("paysDestination") ?? "").trim(),
   );
+  const password = String(formData.get("password") ?? "");
+  const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
+
+  let email = String(formData.get("email") ?? "").trim().toLowerCase();
+  let clientId: string | null = clientSession?.id ?? null;
+
+  if (clientSession) {
+    const me = await prisma.user.findUnique({ where: { id: clientSession.id } });
+    if (!me) {
+      return { error: "Session expiree. Reconnectez-vous." };
+    }
+    email = me.email;
+  }
 
   if (!prenom || !nom || !email || !telephone || !programme || !paysDestination) {
     return {
@@ -171,6 +505,62 @@ export async function soumettreDemandePortailAction(
   }
 
   try {
+    if (!clientId) {
+      const existant = await prisma.user.findUnique({ where: { email } });
+      if (existant) {
+        if (!isClientRole(existant.role)) {
+          return {
+            error:
+              "Cet email est reserve. Utilisez une autre adresse ou connectez-vous.",
+          };
+        }
+        return {
+          error:
+            "Un compte existe deja avec cet email. Connectez-vous avant d envoyer.",
+        };
+      }
+      if (!password) {
+        return {
+          error:
+            "Creez un mot de passe pour ouvrir votre espace client, ou connectez-vous.",
+        };
+      }
+      if (password.length < 8) {
+        return {
+          error: "Le mot de passe doit contenir au moins 8 caracteres.",
+        };
+      }
+      if (password !== passwordConfirm) {
+        return { error: "Les mots de passe ne correspondent pas." };
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10);
+      const user = await prisma.user.create({
+        data: {
+          nom: `${prenom} ${nom}`,
+          email,
+          telephone,
+          passwordHash,
+          role: "CLIENT",
+        },
+      });
+      clientId = user.id;
+      await createSession({
+        id: user.id,
+        nom: user.nom,
+        email: user.email,
+        role: user.role,
+      });
+    } else {
+      await prisma.user.update({
+        where: { id: clientId },
+        data: {
+          nom: `${prenom} ${nom}`,
+          telephone,
+        },
+      });
+    }
+
     const referenceInterne = await prochaineReference();
     const conseillerId = await conseillerAccueilId();
     const notes = [
@@ -192,6 +582,7 @@ export async function soumettreDemandePortailAction(
         statut: "SOUMIS",
         notes,
         conseillerId,
+        clientId,
         personnes: {
           create: {
             roleFamilial: "PRINCIPAL",
@@ -206,7 +597,14 @@ export async function soumettreDemandePortailAction(
     });
 
     await ecrireAudit(
-      null,
+      clientId
+        ? {
+            id: clientId,
+            nom: `${prenom} ${nom}`,
+            email,
+            role: "CLIENT",
+          }
+        : null,
       "CREATION",
       "Dossier",
       dossier.id,
@@ -216,6 +614,7 @@ export async function soumettreDemandePortailAction(
     revalidatePath("/relais");
     revalidatePath("/dossiers");
     revalidatePath("/demandes");
+    revalidatePath("/profil");
     redirect(`/demande/merci?ref=${encodeURIComponent(referenceInterne)}`);
   } catch (error) {
     const digest =
@@ -231,7 +630,7 @@ export async function soumettreDemandePortailAction(
 }
 
 export async function prendreEnChargeAction(formData: FormData) {
-  const session = await requireSession();
+  const session = await requireStaffSession();
   const id = String(formData.get("id") ?? "");
   if (!id) return;
 
@@ -254,7 +653,7 @@ export async function prendreEnChargeAction(formData: FormData) {
 }
 
 export async function majStatutDossierAction(formData: FormData) {
-  const session = await requireSession();
+  const session = await requireStaffSession();
   const id = String(formData.get("id") ?? "");
   const statut = String(formData.get("statut") ?? "");
   if (!id || !statut) return;
@@ -267,7 +666,7 @@ export async function majStatutDossierAction(formData: FormData) {
 }
 
 export async function majPaysDestinationAction(formData: FormData) {
-  const session = await requireSession();
+  const session = await requireStaffSession();
   const id = String(formData.get("id") ?? "");
   let paysDestination = String(formData.get("paysDestination") ?? "").trim();
   if (paysDestination === "Autre") {
@@ -291,7 +690,7 @@ export async function majPaysDestinationAction(formData: FormData) {
 }
 
 export async function majNotesAction(formData: FormData) {
-  const session = await requireSession();
+  const session = await requireStaffSession();
   const id = String(formData.get("id") ?? "");
   const notes = String(formData.get("notes") ?? "");
   if (!id) return;
@@ -305,7 +704,7 @@ export async function ajouterPersonneAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const session = await requireSession();
+  const session = await requireStaffSession();
   const dossierId = String(formData.get("dossierId") ?? "");
   const prenom = String(formData.get("prenom") ?? "").trim();
   const nom = String(formData.get("nom") ?? "").trim();
@@ -344,7 +743,7 @@ export async function ajouterPersonneAction(
 }
 
 export async function retirerPersonneAction(formData: FormData) {
-  const session = await requireSession();
+  const session = await requireStaffSession();
   const id = String(formData.get("id") ?? "");
   const dossierId = String(formData.get("dossierId") ?? "");
   if (!id) return;
@@ -368,7 +767,7 @@ export async function ajouterEvenementAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const session = await requireSession();
+  const session = await requireStaffSession();
   const dossierId = String(formData.get("dossierId") ?? "");
   const type = String(formData.get("type") ?? "AUTRE");
   const dateHeureRaw = String(formData.get("dateHeure") ?? "");
@@ -416,7 +815,7 @@ export async function ajouterEvenementAction(
 }
 
 export async function majStatutEvenementAction(formData: FormData) {
-  const session = await requireSession();
+  const session = await requireStaffSession();
   const id = String(formData.get("id") ?? "");
   const dossierId = String(formData.get("dossierId") ?? "");
   const statut = String(formData.get("statut") ?? "");
@@ -433,7 +832,7 @@ export async function ajouterEmploiAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const session = await requireSession();
+  const session = await requireStaffSession();
   const dossierId = String(formData.get("dossierId") ?? "");
   const poste = String(formData.get("poste") ?? "").trim();
   const ville = String(formData.get("ville") ?? "").trim();
@@ -471,7 +870,7 @@ export async function ajouterBulletinAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const session = await requireSession();
+  const session = await requireStaffSession();
   const emploiId = String(formData.get("emploiId") ?? "");
   const dossierId = String(formData.get("dossierId") ?? "");
   const annee = Number(formData.get("annee") ?? 0);
